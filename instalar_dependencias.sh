@@ -11,7 +11,8 @@ echo "════════════════════════�
 # ── Python libs ────────────────────────────────────
 echo ""
 echo "Instalando librerías Python..."
-pip install elevation rasterio Pillow numpy requests
+pip install elevation rasterio Pillow numpy osmnx requests 
+#pip install osmnx
 
 # ── GDAL (necesario para rasterio y elevation) ─────
 echo ""

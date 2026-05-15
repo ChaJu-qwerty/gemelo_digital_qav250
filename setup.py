@@ -2,6 +2,8 @@ from setuptools import find_packages, setup
 
 package_name = 'gemelo_digital_qav250'
 
+'generador_terreno_node = gemelo_digital_qav250.generador_terreno_node:main',
+
 setup(
     name=package_name,
     version='0.0.0',
