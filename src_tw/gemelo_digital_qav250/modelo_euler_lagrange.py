@@ -20,7 +20,13 @@ class DroneModel:
         print(f"DroneModel inicializado con: m = {self.m} kg, k = {self.k} N·s^2/rad^2")
     
     def calcular_fuerzas_torques(self, omega1, omega2, omega3, omega4):
-        """Ecuaciones 6,7,8 de luukkonen"""
+        """Ecuaciones 6,7,8 de luukkonen adaptadas a configuración en X y mapeo PX4.
+        Mapeo de motores:
+          1: Frontal derecho   (CCW) -> x > 0, y < 0
+          2: Trasero izquierdo (CCW) -> x < 0, y > 0
+          3: Frontal izquierdo (CW)  -> x > 0, y > 0
+          4: Trasero derecho   (CW)  -> x < 0, y < 0
+        """
         # empuje de cada rotor: f_i = k * omega_i^2 (6)
         f1 = self.k * omega1**2 
         f2 = self.k * omega2**2
@@ -30,12 +36,20 @@ class DroneModel:
         # empuje total 
         T = f1 + f2 + f3 + f4 # (7)
 
-        # torques 
-        tau_phi = self.l * self.k * (-omega2**2 + omega4**2) # roll
-        tau_theta = self.l * self.k * (-omega1**2 + omega3**2) # pitch
-        tau_psi = self.b * (-omega1**2 + omega2**2 - omega3**2 + omega4**2)  # yaw
+        # torques en configuración X (el brazo efectivo para roll/pitch es l / sqrt(2))
+        factor_l = self.l / np.sqrt(2.0)
+        
+        # Roll: diferencia entre izquierda (2, 3) y derecha (1, 4)
+        tau_phi = factor_l * (-f1 + f2 + f3 - f4)
+        
+        # Pitch: diferencia entre trasero (2, 4) y frontal (1, 3) (trasero aumenta pitch en Luukkonen)
+        tau_theta = factor_l * (-f1 + f2 - f3 + f4)
+        
+        # Yaw: diferencia entre rotores CCW (1, 2) y CW (3, 4)
+        tau_psi = self.b * (omega1**2 + omega2**2 - omega3**2 - omega4**2)
 
-        omega_G = omega1 - omega2 + omega3 - omega4 # suma giroscopica
+        # Suma giroscópica de los rotores
+        omega_G = omega1 + omega2 - omega3 - omega4
         return T, tau_phi, tau_theta, tau_psi, omega_G
     
     def W_eta(self, phi, theta):
@@ -96,7 +110,7 @@ class DroneModel:
         return C
     
     def derivadas_estado(self, estado, T, tau_phi, tau_theta, tau_psi, omega_G):
-        """Ecuaciones 20 y 21 de lookkonewn"""
+        """Ecuaciones 20 y 21 de Luukkonen"""
         #extraemos los datos de estado actual
         x , y, z = estado[0], estado[1], estado[2]
         phi, theta, psi = estado[3], estado[4], estado[5]
@@ -153,10 +167,10 @@ class DroneModel:
     
     def actualizar(self, omega1, omega2, omega3, omega4, dt):
         """Actualiza el estado del dron"""
-       # 1. Calcular fuerzas y torques
+        # 1. Calcular fuerzas y torques
         T, tau_phi, tau_tht, tau_psi, omega_G = self.calcular_fuerzas_torques(
             omega1, omega2, omega3, omega4
-        ) 
+        )
 
         # 2. Integrar con RK4
         self.estado = self.paso_rk4(dt, T, tau_phi, tau_tht, tau_psi, omega_G)

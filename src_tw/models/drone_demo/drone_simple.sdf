@@ -1,0 +1,216 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="drone_demo">
+    <!-- El modelo es estático para que no se caiga ni le afecte la gravedad,
+         ya que su posición se controla cinemáticamente por el gemelo digital -->
+    <static>true</static>
+    <link name="base_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- Cuerpo central (Chasis) -->
+      <visual name="body_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.08 0.02</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.2 0.2 0.2 1</diffuse>
+          <specular>0.8 0.8 0.8 1</specular>
+        </material>
+      </visual>
+
+      <!-- Indicador de Dirección de Frente (Nose cone) -->
+      <visual name="direction_visual">
+        <pose>0.06 0 0 0 1.57079 0</pose>
+        <geometry>
+          <cone>
+            <radius>0.015</radius>
+            <length>0.03</length>
+          </cone>
+        </geometry>
+        <material>
+          <ambient>1.0 0.5 0 1</ambient>
+          <diffuse>1.0 0.5 0 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- ── Brazos Frontales (Rojos para indicar frente) ── -->
+      <!-- Frontal Derecho (Motor 1) -->
+      <visual name="arm_front_right">
+        <pose>0.0442 -0.0442 0 0 1.57079 -0.78539</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.008</radius>
+            <length>0.125</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.8 0 0 1</ambient>
+          <diffuse>0.8 0 0 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Frontal Izquierdo (Motor 3) -->
+      <visual name="arm_front_left">
+        <pose>0.0442 0.0442 0 0 1.57079 0.78539</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.008</radius>
+            <length>0.125</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.8 0 0 1</ambient>
+          <diffuse>0.8 0 0 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- ── Brazos Traseros (Azules para indicar atrás) ── -->
+      <!-- Trasero Izquierdo (Motor 2) -->
+      <visual name="arm_rear_left">
+        <pose>-0.0442 0.0442 0 0 1.57079 -0.78539</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.008</radius>
+            <length>0.125</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0 0 0.8 1</ambient>
+          <diffuse>0 0 0.8 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Trasero Derecho (Motor 4) -->
+      <visual name="arm_rear_right">
+        <pose>-0.0442 -0.0442 0 0 1.57079 0.78539</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.008</radius>
+            <length>0.125</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0 0 0.8 1</ambient>
+          <diffuse>0 0 0.8 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- ── Motores / Rotores y Hélices ── -->
+      <!-- Motor 1 (Frontal Derecho) -->
+      <visual name="rotor_1">
+        <pose>0.0884 -0.0884 0.015 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.012</radius>
+            <length>0.015</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <visual name="prop_1">
+        <pose>0.0884 -0.0884 0.023 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.06</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 0.5</ambient>
+          <diffuse>0.9 0.9 0.9 0.5</diffuse>
+        </material>
+      </visual>
+
+      <!-- Motor 2 (Trasero Izquierdo) -->
+      <visual name="rotor_2">
+        <pose>-0.0884 0.0884 0.015 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.012</radius>
+            <length>0.015</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <visual name="prop_2">
+        <pose>-0.0884 0.0884 0.023 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.06</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 0.5</ambient>
+          <diffuse>0.9 0.9 0.9 0.5</diffuse>
+        </material>
+      </visual>
+
+      <!-- Motor 3 (Frontal Izquierdo) -->
+      <visual name="rotor_3">
+        <pose>0.0884 0.0884 0.015 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.012</radius>
+            <length>0.015</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <visual name="prop_3">
+        <pose>0.0884 0.0884 0.023 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.06</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 0.5</ambient>
+          <diffuse>0.9 0.9 0.9 0.5</diffuse>
+        </material>
+      </visual>
+
+      <!-- Motor 4 (Trasero Derecho) -->
+      <visual name="rotor_4">
+        <pose>-0.0884 -0.0884 0.015 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.012</radius>
+            <length>0.015</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <visual name="prop_4">
+        <pose>-0.0884 -0.0884 0.023 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.06</radius>
+            <length>0.002</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 0.5</ambient>
+          <diffuse>0.9 0.9 0.9 0.5</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

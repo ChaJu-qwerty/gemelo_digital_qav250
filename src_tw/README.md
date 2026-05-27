@@ -1,165 +1,264 @@
-# Gemelo Digital QAV250 — Modelación de Mundo 3D
+# gemelo_digital_qav250 — Paquete ROS 2
 
-Módulo de generación de entornos 3D realistas para Gazebo combinando datos de elevación satelital (NASA SRTM) y edificios de OpenStreetMap. Permite simular el entorno real donde opera el dron QAV250.
-
----
-
-## ¿Qué hace este módulo?
-
-Dado una coordenada GPS central y un radio en kilómetros, el sistema:
-
-1. Descarga datos de elevación SRTM (NASA) para generar el terreno real
-2. Descarga edificios de OpenStreetMap y los extruye en 3D
-3. Genera un archivo `.world` listo para Gazebo con terreno + edificios
-
-```
-Coordenada GPS (fija en código o tomada del Pixhawk)
-         ↓
-Descarga tile SRTM de la zona  +  Edificios OSM
-         ↓
-Genera heightmap.png  +  modelos SDF de edificios
-         ↓
-Exporta hermosillo_hibrido.world
-         ↓
-Gazebo — dron QAV250 vuela sobre terreno real
-```
+Paquete ROS 2 Humble que implementa el **gemelo digital** del cuadricóptero QAV250. Recibe señales PWM del Pixhawk vía MAVLink, integra las ecuaciones de Euler-Lagrange con RK4 y mueve un modelo 3D en Gazebo Classic 11 en tiempo real.
 
 ---
 
-## Estructura de archivos
+## Estructura del Paquete
 
 ```
-gemelo_digital_qav250/
-├── scripts/
-│   ├── generar_mundo_hibrido.py     # Script principal — genera el .world
-│   └── rutina_drone.py              # Rutina de vuelo de prueba
-│
-├── models/
-│   └── drone_demo/
-│       ├── model.config             # Metadata del modelo
-│       └── drone_simple.sdf        # Modelo 3D del drone de prueba (rojo)
-│
-├── data/dem/                        # Generado automáticamente
-│   ├── terreno.tif                  # Datos SRTM crudos
-│   └── heightmap.png                # Imagen de altura para Gazebo
-│
-└── worlds/                          # Generado automáticamente
-    └── hermosillo_hibrido.world     # Mundo final para Gazebo
+src_tw/
+├── gemelo_digital_qav250/          # Módulo Python principal
+│   ├── __init__.py
+│   ├── captura_pwm.py              # Conexión MAVLink y conversión PWM→ω
+│   ├── modelo_euler_lagrange.py    # Física del dron (Luukkonen 2011)
+│   ├── nodo_gemelo_digital.py      # Nodo ROS 2 orquestador
+│   └── config/
+│       └── qav250_params.yaml      # Parámetros físicos y de conexión
+├── launch/
+│   └── gemelo_digital.launch.py   # Lanza Gazebo + dron + nodo
+├── models/drone_demo/              # Modelo 3D Gazebo
+│   ├── model.config
+│   └── drone_simple.sdf            # SDF cinemático con brazos color-coded
+├── worlds/
+│   └── qav250_twin.world           # Mundo Gazebo con plugin gazebo_ros_state
+├── test/
+│   └── test_modelo.py              # Pruebas unitarias (sin ROS ni Gazebo)
+├── package.xml
+├── setup.py
+├── setup.cfg
+├── instalar_dependencias.sh
+└── README.md                       # Este archivo
 ```
 
 ---
 
 ## Dependencias
 
+### Sistema (apt)
 ```bash
-# Sistema
-sudo apt-get install gdal-bin python3-gdal libgdal-dev
-
-# Python
-pip install elevation rasterio Pillow numpy osmnx shapely
-
-# Si hay conflicto de NumPy
-pip install "numpy<2.0" --force-reinstall
+sudo apt-get install -y \
+    ros-humble-gazebo-ros-pkgs \
+    ros-humble-gazebo-ros \
+    ros-humble-gazebo-msgs \
+    ros-humble-tf-transformations \
+    ros-humble-launch-ros \
+    python3-pip python3-numpy python3-transforms3d
 ```
+
+### Python (pip)
+```bash
+pip3 install pymavlink
+```
+
+> 💡 También puedes usar el script incluido:
+> ```bash
+> bash instalar_dependencias.sh
+> ```
 
 ---
 
-## Uso
+## Instalación y Compilación
 
-### 1. Configurar coordenadas y radio
-
-Edita las primeras líneas de `scripts/generar_mundo_hibrido.py`:
-
-```python
-LAT_CENTRO       = 29.0729    # Latitud central
-LON_CENTRO       = -110.9559  # Longitud central
-RADIO_KM         = 2.0        # Radio del área en km (recomendado: 1–3)
-RESOLUCION       = 129        # Resolución heightmap: 65 / 129 / 257 / 513
-ESCALA_Z         = 1.0        # Multiplicador de altura (1.0 = real)
-ALTURA_DEFAULT_M = 6.0        # Altura de edificios sin dato en OSM (m)
-```
-
-### 2. Generar el mundo
+### 1. Clonar / Copiar en el workspace de ROS 2
 
 ```bash
-cd ~/ros2_ws/src/gemelo_digital_qav250
-python3 scripts/generar_mundo_hibrido.py
+# Si no tienes workspace, créalo:
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+
+# Copia o enlaza este paquete aquí:
+# La carpeta src_tw debe quedar como:
+#   ~/ros2_ws/src/gemelo_digital_qav250/
+cp -r /ruta/al/repo/gemelo_digital_qav250/src_tw ~/ros2_ws/src/gemelo_digital_qav250
 ```
 
-Salida esperada:
-```
-[1/4] Descargando SRTM...       ← ~30 seg, requiere internet
-[2/4] Procesando heightmap...
-      elev 189 m – 418 m  (rango 229 m)
-      mundo 3989 x 3989 m
-[3/4] Descargando edificios OSM...
-      433 edificios encontrados
-[4/4] Generando .world  (433 edificios)
-      OK -> worlds/hermosillo_hibrido.world
-```
-
-### 3. Abrir en Gazebo
+### 2. Compilar con Colcon
 
 ```bash
-export GAZEBO_MODEL_PATH=/home/$USER/ros2_ws/src/gemelo_digital_qav250/models:$GAZEBO_MODEL_PATH
-
-killall gzserver gzclient 2>/dev/null; sleep 2
-cd ~/ros2_ws/src/gemelo_digital_qav250
-gzserver worlds/hermosillo_hibrido.world &
-sleep 8 && gzclient
-```
-
-### 4. Correr rutina de vuelo de prueba
-
-Con Gazebo ya abierto, en otra terminal:
-
-```bash
-cd ~/ros2_ws/src/gemelo_digital_qav250
+cd ~/ros2_ws
 source /opt/ros/humble/setup.bash
-python3 scripts/rutina_drone.py
+colcon build --packages-select gemelo_digital_qav250
 ```
 
-El drone ejecuta: despegue → cuadrado de 150×150 m → regreso → aterrizaje.
+### 3. Sourcear el workspace
+
+```bash
+source ~/ros2_ws/install/setup.bash
+```
+
+> ⚠️ Agrega esta línea a tu `~/.bashrc` para no tener que repetirla:
+> ```bash
+> echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+> ```
 
 ---
 
-## Fuentes de datos
+## Ejecución
 
-| Fuente | Uso | Resolución | Licencia |
-|--------|-----|------------|----------|
-| NASA SRTM3 | Elevación del terreno | ~90 m/pixel | Dominio público |
-| OpenStreetMap | Edificios y footprints | Variable | ODbL |
+### Opción A — Launch completo (Gazebo + Nodo) — Recomendado
 
-> **Nota:** SRTM captura topografía natural (cerros, valles). Los edificios provienen de OSM — la cobertura depende de los contribuidores locales. En Hermosillo centro hay ~430 edificios mapeados.
+```bash
+ros2 launch gemelo_digital_qav250 gemelo_digital.launch.py
+```
+
+Esto:
+1. Lanza Gazebo Classic con `qav250_twin.world`
+2. Spawnea el modelo 3D del dron en el origen
+3. Inicia el nodo `nodo_gemelo_digital` con los parámetros de `qav250_params.yaml`
+4. El nodo espera conexión MAVLink desde el Pixhawk (UDP puerto 14551 por defecto)
+
+### Opción B — Solo el nodo (sin Gazebo)
+
+```bash
+ros2 run gemelo_digital_qav250 nodo_gemelo_digital \
+  --ros-args --params-file src_tw/gemelo_digital_qav250/config/qav250_params.yaml
+```
+
+### Opción C — Solo captura PWM (diagnóstico)
+
+Para verificar que el Pixhawk está enviando datos correctamente:
+```bash
+# Via UDP (con QGroundControl activo):
+ros2 run gemelo_digital_qav250 captura_pwm -- --modo udp
+
+# Via USB directo:
+ros2 run gemelo_digital_qav250 captura_pwm -- --modo serial --puerto /dev/ttyACM0
+
+# Guardar a CSV:
+ros2 run gemelo_digital_qav250 captura_pwm -- --modo udp --guardar datos_prueba.csv
+```
 
 ---
 
-## Parámetros clave
+## Configuración MAVLink (QGroundControl → UDP)
 
-| Parámetro | Descripción | Valor actual |
-|-----------|-------------|--------------|
-| `LAT_CENTRO` | Latitud del centro del mapa | 29.0729 |
-| `LON_CENTRO` | Longitud del centro del mapa | -110.9559 |
-| `RADIO_KM` | Radio del área generada | 2.0 km |
-| `RESOLUCION` | Resolución del heightmap | 129×129 px |
-| `ALTURA_DEFAULT_M` | Altura de edificios sin dato | 6.0 m |
-| `Z_BASE` (rutina) | Altura de vuelo en Gazebo | 50.0 m |
+Para que el nodo reciba datos del Pixhawk via QGC:
 
----
+1. Abre QGroundControl
+2. Ve a **Application Settings → Comm Links → Add**
+3. Tipo: **UDP**, Puerto escucha: `14550`
+4. Agrega target: `127.0.0.1:14551`
+5. El nodo escucha en `udpin:127.0.0.1:14551`
 
-## Trabajo futuro
-
-- [ ] Integración con GPS del Pixhawk via MAVROS para centrar el mapa automáticamente
-- [ ] Texturas de satélite sobre el terreno (Mapbox / WMTS)
-- [ ] Evitación de obstáculos usando el mapa de edificios OSM
-- [ ] Mayor resolución con datos LiDAR de INEGI para zonas específicas
-- [ ] Cámara de seguimiento adjunta al modelo del dron
+Para conexión directa por USB (sin QGC), edita `qav250_params.yaml`:
+```yaml
+mavlink_modo: "serial"
+mavlink_puerto: "/dev/ttyACM0"   # o /dev/ttyUSB0
+```
 
 ---
 
-## Notas técnicas
+## Topics ROS 2 Publicados
 
-- El heightmap se genera en formato PNG de 8 bits escala de grises (modo `L`), que es el formato más compatible con Gazebo 11
-- Los edificios OSM se aproximan como cajas (`<box>`) usando el bounding box de cada polígono
-- El Z de los edificios se calcula a partir del pixel central del heightmap para coincidir con la elevación real del terreno en Gazebo
-- El `GAZEBO_MODEL_PATH` debe incluir la carpeta `models/` del paquete para que Gazebo encuentre el modelo `drone_demo`
+| Topic | Tipo | Contenido |
+|-------|------|-----------|
+| `/qav250/pose` | `geometry_msgs/PoseStamped` | Posición (x,y,z) + orientación (quaternion) estimada |
+| `/qav250/motores` | `std_msgs/Float32MultiArray` | `[ω1, ω2, ω3, ω4, pwm1, pwm2, pwm3, pwm4]` |
+| `/gazebo/set_entity_state` | `gazebo_msgs/EntityState` | Pose enviada a Gazebo para mover el modelo |
+
+### Monitorear topics en tiempo real
+
+```bash
+# Ver pose del gemelo en la terminal:
+ros2 topic echo /qav250/pose
+
+# Ver velocidades de motores:
+ros2 topic echo /qav250/motores
+
+# Ver frecuencia real de publicación:
+ros2 topic hz /qav250/pose
+```
+
+---
+
+## Pruebas Unitarias del Modelo (sin ROS)
+
+Puedes verificar el modelo matemático en **cualquier máquina con Python y NumPy**, sin necesitar ROS ni Gazebo ni el dron físico:
+
+```bash
+# Desde la carpeta src_tw:
+cd ~/ros2_ws/src/gemelo_digital_qav250
+python3 test/test_modelo.py
+```
+
+Pruebas incluidas:
+- ✅ Hover equilibrado (empuje = peso, torques = 0)
+- ✅ Comando de Roll → torque de roll positivo
+- ✅ Comando de Pitch → torque de pitch positivo
+- ✅ Comando de Yaw → torque de yaw positivo
+- ✅ Integración RK4 de 1 segundo → estado físicamente coherente
+
+---
+
+## Modelo Matemático — Resumen
+
+Basado en **Luukkonen (2011)**, configuración en **X** (frame PX4):
+
+### Asignación de motores
+
+```
+        FRENTE (+X)
+           M1 (CCW)    M3 (CW)
+              \        /
+               \  ┼  /
+               /  ┼  \
+              /        \
+           M2 (CCW)    M4 (CW)
+        ATRÁS (-X)
+```
+
+| Motor | Posición | Giro |
+|-------|----------|------|
+| M1 (Canal 1) | Frontal Derecho | CCW |
+| M2 (Canal 2) | Trasero Izquierdo | CCW |
+| M3 (Canal 3) | Frontal Izquierdo | CW |
+| M4 (Canal 4) | Trasero Derecho | CW |
+
+### Ecuaciones de Fuerzas y Torques
+
+$$T = k(\omega_1^2 + \omega_2^2 + \omega_3^2 + \omega_4^2)$$
+
+$$\tau_\phi = \frac{l}{\sqrt{2}} k (-\omega_1^2 + \omega_2^2 + \omega_3^2 - \omega_4^2)$$
+
+$$\tau_\theta = \frac{l}{\sqrt{2}} k (-\omega_1^2 + \omega_2^2 - \omega_3^2 + \omega_4^2)$$
+
+$$\tau_\psi = b (\omega_1^2 + \omega_2^2 - \omega_3^2 - \omega_4^2)$$
+
+### Vector de Estado (12 variables)
+
+```
+estado[0:3]  = x, y, z          (posición inercial [m])
+estado[3:6]  = φ, θ, ψ          (roll, pitch, yaw [rad])
+estado[6:9]  = ẋ, ẏ, ż          (velocidades [m/s])
+estado[9:12] = φ̇, θ̇, ψ̇         (velocidades angulares [rad/s])
+```
+
+---
+
+## Parámetros a Calibrar
+
+Edita `gemelo_digital_qav250/config/qav250_params.yaml` con los valores reales:
+
+| Parámetro | Descripción | Fuente |
+|-----------|-------------|--------|
+| `m` | Masa total [kg] | Báscula |
+| `l` | Longitud del brazo [m] | SolidWorks / cinta |
+| `Ixx`, `Iyy`, `Izz` | Momentos de inercia [kg·m²] | SolidWorks + inercia FFT GYRO |
+| `k` | Coeficiente de empuje [N·s²/rad²] | Banco de pruebas |
+| `b` | Coeficiente de arrastre [N·m·s²/rad²] | Banco de pruebas |
+| `Ir` | Inercia del rotor [kg·m²] | Datasheet motor RS2205 |
+
+> ⚠️ **Nota crítica sobre el FFT GYRO**: Los momentos de inercia que usa el modelo deben incluir la contribución de la parte móvil del banco de pruebas:
+> ```
+> I_total = I_dron (SolidWorks) + I_soporte_movil (FFT GYRO)
+> ```
+
+---
+
+## Referencias
+
+- Luukkonen, T. (2011). *Modelling and control of quadcopter*. School of Science, Aalto University.
+- ROS 2 Humble: https://docs.ros.org/en/humble/
+- Gazebo Classic 11: https://classic.gazebosim.org/
+- PX4 Motor Conventions: https://docs.px4.io/main/en/airframes/airframe_reference.html
