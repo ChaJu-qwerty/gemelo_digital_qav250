@@ -6,7 +6,9 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
+# pyrefly: ignore [missing-import]
 from geometry_msgs.msg import PoseStamped
+# pyrefly: ignore [missing-import]
 from std_msgs.msg import Float32MultiArray, MultiArrayDimension
 
 try:
@@ -153,6 +155,7 @@ class NodoGemeloDigital(Node):
         self.declare_parameter("Az",                 0.0)
         self.declare_parameter("mavlink_modo",       "udp")
         self.declare_parameter("mavlink_puerto",     "/dev/ttyACM0")
+        self.declare_parameter("mavlink_udp_ip",     "0.0.0.0")
         self.declare_parameter("mavlink_udp_puerto", 14551)
         self.declare_parameter("frecuencia_hz",      20.0)
         self.declare_parameter("topic_pose",         "/qav250/pose")
@@ -177,6 +180,7 @@ class NodoGemeloDigital(Node):
             "Az"                : self.get_parameter("Az").value,
             "mavlink_modo"      : self.get_parameter("mavlink_modo").value,
             "mavlink_puerto"    : self.get_parameter("mavlink_puerto").value,
+            "mavlink_udp_ip"    : self.get_parameter("mavlink_udp_ip").value,
             "mavlink_udp_puerto": self.get_parameter("mavlink_udp_puerto").value,
             "frecuencia_hz"     : self.get_parameter("frecuencia_hz").value,
             "topic_pose"        : self.get_parameter("topic_pose").value,
@@ -195,7 +199,7 @@ class NodoGemeloDigital(Node):
         """
         modo = self.params["mavlink_modo"]
         if modo == "udp":
-            cadena = f"udpin:127.0.0.1:{self.params['mavlink_udp_puerto']}"
+            cadena = f"udpin:{self.params['mavlink_udp_ip']}:{self.params['mavlink_udp_puerto']}"
         else:
             cadena = f"{self.params['mavlink_puerto']},115200"
 

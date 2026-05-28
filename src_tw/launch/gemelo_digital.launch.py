@@ -30,7 +30,8 @@ def generate_launch_description():
         executable='spawn_entity.py',
         arguments=['-entity', 'drone_demo', 
                    '-file', os.path.join(models_path, 'drone_demo', 'drone_simple.sdf'),
-                   '-x', '0.0', '-y', '0.0', '-z', '0.0'],
+                   '-x', '0.0', '-y', '0.0', '-z', '0.0',
+                   '-timeout', '120'],
         output='screen'
     )
 

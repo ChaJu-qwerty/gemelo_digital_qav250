@@ -50,6 +50,9 @@
     # Linux:   "/dev/ttyUSB0", "/dev/ttyACM0"
     mavlink_puerto: "COM3"
 
+    # IP de escucha UDP — usar "0.0.0.0" para escuchar en toda la red
+    mavlink_udp_ip: "0.0.0.0"
+
     # Puerto UDP — solo aplica si mavlink_modo = "udp"
     # QGC transmite en 14550; este nodo escucha en 14551
     mavlink_udp_puerto: 14551
@@ -68,6 +71,6 @@
 
 
     # PARÁMETROS DEL MOTOR RS2205 2300KV
-    motor_kv: 2300          # KV rating del motor [RPM/V]
+    motor_kv: 2300.0         # KV rating del motor [RPM/V]
     bateria_voltaje: 14.8   # Voltaje de la batería 4S [V]
     esc_eficiencia: 0.85    # Eficiencia estimada del ESC [0-1]

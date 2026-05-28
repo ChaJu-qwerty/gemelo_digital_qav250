@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 # Agregar el directorio src_tw al path para poder importar el módulo localmente
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
 
 from gemelo_digital_qav250.modelo_euler_lagrange import DroneModel
 

@@ -175,7 +175,13 @@ class DroneModel:
         # 2. Integrar con RK4
         self.estado = self.paso_rk4(dt, T, tau_phi, tau_tht, tau_psi, omega_G)
 
-        # 3. Retornar estado actualizado
+        # 3. Piso simple (evitar caída infinita)
+        if self.estado[2] < 0.0:
+            self.estado[2] = 0.0  # Z = 0 (suelo)
+            if self.estado[8] < 0.0:
+                self.estado[8] = 0.0  # Velocidad en Z = 0
+
+        # 4. Retornar estado actualizado
         return self.estado
     
     def get_estado(self):
