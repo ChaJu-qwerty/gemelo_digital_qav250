@@ -1,264 +1,127 @@
 # gemelo_digital_qav250 — Paquete ROS 2
 
-Paquete ROS 2 Humble que implementa el **gemelo digital** del cuadricóptero QAV250. Recibe señales PWM del Pixhawk vía MAVLink, integra las ecuaciones de Euler-Lagrange con RK4 y mueve un modelo 3D en Gazebo Classic 11 en tiempo real.
+Este paquete de ROS 2 Humble implementa el **gemelo digital** del cuadricóptero QAV250 montado sobre el banco de pruebas rotacional **FFT GYRO**. Integra las ecuaciones físicas de Euler-Lagrange mediante métodos de Runge-Kutta 4 (RK4) y sincroniza de manera visual el modelo 3D en Gazebo Classic 11 en tiempo real.
 
 ---
 
-## Estructura del Paquete
+## 🚀 Cambios y Mejoras Recientes
 
-```
+1. **Calibración Física del Empuje (`k`)**: Se ajustó el coeficiente de empuje a $k = 1.72 \times 10^{-6}$ en `qav250_params.yaml`. Esto alinea la simulación para que el hover del dron ocurra al **30% de aceleración (PWM = 1300 µs)** y empiece a subir al **35% (PWM = 1350 µs)**, idéntico al comportamiento real del dron. A velocidades de ralentí/armado (PWM ~1084 µs / 8.4% de throttle), el dron ya no despega ni deriva del suelo en la simulación.
+2. **Script de Telemetría en Tiempo Real (`ver_pose`)**: Se implementó una herramienta de consola que lee el topic `/qav250/pose`, convierte automáticamente el cuaternión de orientación a ángulos de Euler en **Grados (Roll, Pitch, Yaw)** y mantiene la posición en **Metros**, refrescando la consola de forma limpia.
+3. **Cierre Automático de Procesos Zombies**: Se incorporó un limpiador automático en los archivos de lanzamiento (`launch`) para matar cualquier instancia previa huérfana de `gzserver` o `gzclient` antes de iniciar la simulación, resolviendo los cuelgues de inicialización y errores `exit code 255` de Gazebo.
+4. **Física No Bloqueante**: La comunicación del nodo con el servicio `/set_entity_state` de Gazebo se rediseñó a llamadas asíncronas libres de bloqueos. Si Gazebo se ralentiza al iniciar, el solucionador matemático del gemelo digital continúa procesando la física de fondo sin interrupciones a sus 20 Hz nominales.
+5. **Script de Instalación Unificado**: `instalar_dependencias.sh` ahora instala e integra de forma automática todo el entorno necesario (ROS 2 Humble, Gazebo Classic 11, dependencias del sistema y de Python).
+
+---
+
+## 📁 Estructura del Proyecto
+
+```text
 src_tw/
-├── gemelo_digital_qav250/          # Módulo Python principal
+├── gemelo_digital_qav250/          # Módulo Python principal del nodo ROS 2
 │   ├── __init__.py
-│   ├── captura_pwm.py              # Conexión MAVLink y conversión PWM→ω
-│   ├── modelo_euler_lagrange.py    # Física del dron (Luukkonen 2011)
-│   ├── nodo_gemelo_digital.py      # Nodo ROS 2 orquestador
+│   ├── captura_pwm.py              # Conexión MAVLink y conversión PWM -> ω (rad/s)
+│   ├── modelo_euler_lagrange.py    # Resolvedor de física (Ecuaciones de Luukkonen 2011)
+│   ├── nodo_gemelo_digital.py      # Nodo ROS 2 orquestador principal
+│   ├── ver_pose.py                 # [NUEVO] Nodo de telemetría Roll/Pitch/Yaw en grados y metros
 │   └── config/
-│       └── qav250_params.yaml      # Parámetros físicos y de conexión
+│       └── qav250_params.yaml      # Parámetros físicos, aerodinámicos y de conexión
 ├── launch/
-│   └── gemelo_digital.launch.py   # Lanza Gazebo + dron + nodo
-├── models/drone_demo/              # Modelo 3D Gazebo
+│   ├── gemelo_digital.launch.py   # Launch para modo REAL (conecta a Pixhawk vía MAVLink)
+│   └── gemelo_demo.launch.py      # Launch para modo DEMO (simula rutina de vuelo automática)
+├── models/drone_demo/              # Modelo 3D y descripción visual del dron para Gazebo
 │   ├── model.config
-│   └── drone_simple.sdf            # SDF cinemático con brazos color-coded
+│   └── drone_simple.sdf            # SDF cinemático con hélices y brazos identificados
 ├── worlds/
-│   └── qav250_twin.world           # Mundo Gazebo con plugin gazebo_ros_state
+│   └── qav250_twin.world           # Mundo de Gazebo con plugin 'gazebo_ros_state'
 ├── test/
-│   └── test_modelo.py              # Pruebas unitarias (sin ROS ni Gazebo)
-├── package.xml
-├── setup.py
+│   └── test_modelo.py              # Test unitario del modelo Euler-Lagrange (sin dependencias de ROS)
+├── package.xml                     # Metadatos del paquete ROS 2
+├── setup.py                        # Script de instalación setuptools y scripts ejecutables
 ├── setup.cfg
-├── instalar_dependencias.sh
-└── README.md                       # Este archivo
+└── instalar_dependencias.sh        # [NUEVO] Instala ROS, Gazebo, librerías y configura variables
 ```
 
 ---
 
-## Dependencias
+## 🛠️ Instalación y Configuración Completa
 
-### Sistema (apt)
+### 1. Instalar dependencias del sistema y de Python
+Ejecuta el script unificado de instalación. Este instalará **ROS 2 Humble, Gazebo Classic 11** y todos los paquetes requeridos si no los tienes en tu sistema:
 ```bash
-sudo apt-get install -y \
-    ros-humble-gazebo-ros-pkgs \
-    ros-humble-gazebo-ros \
-    ros-humble-gazebo-msgs \
-    ros-humble-tf-transformations \
-    ros-humble-launch-ros \
-    python3-pip python3-numpy python3-transforms3d
+cd /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw
+bash instalar_dependencias.sh
 ```
 
-### Python (pip)
+### 2. Cargar tu terminal e inicializar Workspace de ROS 2
 ```bash
-pip3 install pymavlink
-```
-
-> 💡 También puedes usar el script incluido:
-> ```bash
-> bash instalar_dependencias.sh
-> ```
-
----
-
-## Instalación y Compilación
-
-### 1. Clonar / Copiar en el workspace de ROS 2
-
-```bash
-# Si no tienes workspace, créalo:
+# Crear o asegurar el workspace de ROS 2
 mkdir -p ~/ros2_ws/src
-cd ~/ros2_ws/src
-
-# Copia o enlaza este paquete aquí:
-# La carpeta src_tw debe quedar como:
-#   ~/ros2_ws/src/gemelo_digital_qav250/
-cp -r /ruta/al/repo/gemelo_digital_qav250/src_tw ~/ros2_ws/src/gemelo_digital_qav250
-```
-
-### 2. Compilar con Colcon
-
-```bash
+cp -r /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw ~/ros2_ws/src/gemelo_digital_qav250
 cd ~/ros2_ws
+
+# Compilar usando colcon
 source /opt/ros/humble/setup.bash
-colcon build --packages-select gemelo_digital_qav250
+colcon build --packages-select gemelo_digital_qav250 --symlink-install
+source install/setup.bash
 ```
-
-### 3. Sourcear el workspace
-
-```bash
-source ~/ros2_ws/install/setup.bash
-```
-
-> ⚠️ Agrega esta línea a tu `~/.bashrc` para no tener que repetirla:
-> ```bash
-> echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
-> ```
 
 ---
 
-## Ejecución
+## 🚀 Ejecución del Proyecto
 
-### Opción A — Launch completo (Gazebo + Nodo) — Recomendado
-
+### Modo A: Vuelo Real (Pixhawk Físico)
+Esta opción se conecta al Pixhawk del dron real a través de MAVLink (por puerto serie USB o telemetría UDP).
 ```bash
 ros2 launch gemelo_digital_qav250 gemelo_digital.launch.py
 ```
+*El nodo leerá los PWMs que genera el Pixhawk en tiempo real, calculará la posición teórica en base a la física y la enviará a Gazebo para sincronizar la maqueta.*
 
-Esto:
-1. Lanza Gazebo Classic con `qav250_twin.world`
-2. Spawnea el modelo 3D del dron en el origen
-3. Inicia el nodo `nodo_gemelo_digital` con los parámetros de `qav250_params.yaml`
-4. El nodo espera conexión MAVLink desde el Pixhawk (UDP puerto 14551 por defecto)
+### Modo B: Rutina Demostración (Simulado)
+Esta opción realiza un vuelo automático prefijado (Despegue, Hover, Roll, Pitch, Yaw, Descenso y Apagado) sin necesidad de conectar hardware real.
+```bash
+ros2 launch gemelo_digital_qav250 gemelo_demo.launch.py
+```
 
-### Opción B — Solo el nodo (sin Gazebo)
+---
+
+## 📊 Telemetría y Monitoreo de Datos
+
+Para verificar la orientación y la posición del dron sin lidiar con los complejos cuaterniones, abre una nueva terminal y corre el nodo de telemetría:
 
 ```bash
-ros2 run gemelo_digital_qav250 nodo_gemelo_digital \
-  --ros-args --params-file src_tw/gemelo_digital_qav250/config/qav250_params.yaml
+source ~/ros2_ws/install/setup.bash
+ros2 run gemelo_digital_qav250 ver_pose
 ```
 
-### Opción C — Solo captura PWM (diagnóstico)
+### Unidades utilizadas:
+* **Posición ($X, Y, Z$)**: Expresadas en **Metros ($m$)**.
+* **Orientación (Roll, Pitch, Yaw)**: Expresadas en **Grados ($^{\circ}$)**.
 
-Para verificar que el Pixhawk está enviando datos correctamente:
-```bash
-# Via UDP (con QGroundControl activo):
-ros2 run gemelo_digital_qav250 captura_pwm -- --modo udp
-
-# Via USB directo:
-ros2 run gemelo_digital_qav250 captura_pwm -- --modo serial --puerto /dev/ttyACM0
-
-# Guardar a CSV:
-ros2 run gemelo_digital_qav250 captura_pwm -- --modo udp --guardar datos_prueba.csv
-```
-
----
-
-## Configuración MAVLink (QGroundControl → UDP)
-
-Para que el nodo reciba datos del Pixhawk via QGC:
-
-1. Abre QGroundControl
-2. Ve a **Application Settings → Comm Links → Add**
-3. Tipo: **UDP**, Puerto escucha: `14550`
-4. Agrega target: `127.0.0.1:14551`
-5. El nodo escucha en `udpin:127.0.0.1:14551`
-
-Para conexión directa por USB (sin QGC), edita `qav250_params.yaml`:
-```yaml
-mavlink_modo: "serial"
-mavlink_puerto: "/dev/ttyACM0"   # o /dev/ttyUSB0
+```text
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+  [UNIDADES DE POSICIÓN: METROS (m)]
+    X (Lateral/Roll):      0.005 m
+    Y (Longitud/Pitch):   -0.012 m
+    Z (Altura/Empuje):     0.320 m
+--------------------------------------------------
+  [UNIDADES DE ORIENTACIÓN: GRADOS (°)]
+    Roll  (Alabeo):        1.20°
+    Pitch (Cabeceo):      -0.50°
+    Yaw   (Guiñada):      15.30°
+==================================================
 ```
 
 ---
 
-## Topics ROS 2 Publicados
+## ⚙️ Calibración de Parámetros Físicos
 
-| Topic | Tipo | Contenido |
-|-------|------|-----------|
-| `/qav250/pose` | `geometry_msgs/PoseStamped` | Posición (x,y,z) + orientación (quaternion) estimada |
-| `/qav250/motores` | `std_msgs/Float32MultiArray` | `[ω1, ω2, ω3, ω4, pwm1, pwm2, pwm3, pwm4]` |
-| `/gazebo/set_entity_state` | `gazebo_msgs/EntityState` | Pose enviada a Gazebo para mover el modelo |
+El comportamiento dinámico se puede reconfigurar de manera inmediata editando el archivo `qav250_params.yaml` (los cambios surten efecto al reiniciar el nodo gracias a `--symlink-install`):
 
-### Monitorear topics en tiempo real
-
-```bash
-# Ver pose del gemelo en la terminal:
-ros2 topic echo /qav250/pose
-
-# Ver velocidades de motores:
-ros2 topic echo /qav250/motores
-
-# Ver frecuencia real de publicación:
-ros2 topic hz /qav250/pose
-```
-
----
-
-## Pruebas Unitarias del Modelo (sin ROS)
-
-Puedes verificar el modelo matemático en **cualquier máquina con Python y NumPy**, sin necesitar ROS ni Gazebo ni el dron físico:
-
-```bash
-# Desde la carpeta src_tw:
-cd ~/ros2_ws/src/gemelo_digital_qav250
-python3 test/test_modelo.py
-```
-
-Pruebas incluidas:
-- ✅ Hover equilibrado (empuje = peso, torques = 0)
-- ✅ Comando de Roll → torque de roll positivo
-- ✅ Comando de Pitch → torque de pitch positivo
-- ✅ Comando de Yaw → torque de yaw positivo
-- ✅ Integración RK4 de 1 segundo → estado físicamente coherente
-
----
-
-## Modelo Matemático — Resumen
-
-Basado en **Luukkonen (2011)**, configuración en **X** (frame PX4):
-
-### Asignación de motores
-
-```
-        FRENTE (+X)
-           M1 (CCW)    M3 (CW)
-              \        /
-               \  ┼  /
-               /  ┼  \
-              /        \
-           M2 (CCW)    M4 (CW)
-        ATRÁS (-X)
-```
-
-| Motor | Posición | Giro |
-|-------|----------|------|
-| M1 (Canal 1) | Frontal Derecho | CCW |
-| M2 (Canal 2) | Trasero Izquierdo | CCW |
-| M3 (Canal 3) | Frontal Izquierdo | CW |
-| M4 (Canal 4) | Trasero Derecho | CW |
-
-### Ecuaciones de Fuerzas y Torques
-
-$$T = k(\omega_1^2 + \omega_2^2 + \omega_3^2 + \omega_4^2)$$
-
-$$\tau_\phi = \frac{l}{\sqrt{2}} k (-\omega_1^2 + \omega_2^2 + \omega_3^2 - \omega_4^2)$$
-
-$$\tau_\theta = \frac{l}{\sqrt{2}} k (-\omega_1^2 + \omega_2^2 - \omega_3^2 + \omega_4^2)$$
-
-$$\tau_\psi = b (\omega_1^2 + \omega_2^2 - \omega_3^2 - \omega_4^2)$$
-
-### Vector de Estado (12 variables)
-
-```
-estado[0:3]  = x, y, z          (posición inercial [m])
-estado[3:6]  = φ, θ, ψ          (roll, pitch, yaw [rad])
-estado[6:9]  = ẋ, ẏ, ż          (velocidades [m/s])
-estado[9:12] = φ̇, θ̇, ψ̇         (velocidades angulares [rad/s])
-```
-
----
-
-## Parámetros a Calibrar
-
-Edita `gemelo_digital_qav250/config/qav250_params.yaml` con los valores reales:
-
-| Parámetro | Descripción | Fuente |
-|-----------|-------------|--------|
-| `m` | Masa total [kg] | Báscula |
-| `l` | Longitud del brazo [m] | SolidWorks / cinta |
-| `Ixx`, `Iyy`, `Izz` | Momentos de inercia [kg·m²] | SolidWorks + inercia FFT GYRO |
-| `k` | Coeficiente de empuje [N·s²/rad²] | Banco de pruebas |
-| `b` | Coeficiente de arrastre [N·m·s²/rad²] | Banco de pruebas |
-| `Ir` | Inercia del rotor [kg·m²] | Datasheet motor RS2205 |
-
-> ⚠️ **Nota crítica sobre el FFT GYRO**: Los momentos de inercia que usa el modelo deben incluir la contribución de la parte móvil del banco de pruebas:
-> ```
-> I_total = I_dron (SolidWorks) + I_soporte_movil (FFT GYRO)
-> ```
-
----
-
-## Referencias
-
-- Luukkonen, T. (2011). *Modelling and control of quadcopter*. School of Science, Aalto University.
-- ROS 2 Humble: https://docs.ros.org/en/humble/
-- Gazebo Classic 11: https://classic.gazebosim.org/
-- PX4 Motor Conventions: https://docs.px4.io/main/en/airframes/airframe_reference.html
+* **`m`** (0.580 kg): Masa total medida en báscula.
+* **`Ixx`, `Iyy`, `Izz`**: Momentos de inercia del sistema combinado. **Nota**: Deben sumar los momentos calculados en SolidWorks del dron más la inercia que añade la parte móvil del soporte **FFT GYRO** en sus respectivos ejes.
+* **`k`** ($1.72 \times 10^{-6}$): Coeficiente de empuje. Calibrado para hover al 30%.
+* **`b`** ($2.75 \times 10^{-8}$): Coeficiente de torque de Yaw del motor.
+* **`Ax`, `Ay`, `Az`** (0.15): Coeficiente de arrastre traslacional del aire (evita el deslizamiento infinito por inercia).

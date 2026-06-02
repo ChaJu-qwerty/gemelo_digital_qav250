@@ -9,7 +9,7 @@
       <uri>model://sun</uri>
     </include>
 
-    <!-- Plugin de ROS 2 para permitir mover modelos de forma cinemática usando temas (topics) -->
+    <!-- Plugin de ROS 2 para permitir mover modelos cinemáticamente usando temas (topics) -->
     <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
       <ros>
         <namespace>/</namespace>
@@ -24,10 +24,114 @@
 
     <gui fullscreen='false'>
       <camera name='user_camera'>
-        <pose>0.8 -0.8 0.5 0 0.35 2.35</pose>
+        <pose>1.5 -1.5 1.0 0 0.3 2.35</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  OBJETOS DE REFERENCIA VISUAL MINIMALISTA                             -->
+    <!--  Solo la plataforma de despegue y los ejes para no cargar la PC       -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── PLATAFORMA DE DESPEGUE (Helipad) ─────────────────────────────── -->
+    <model name="helipad">
+      <static>true</static>
+      <pose>0 0 0.001 0 0 0</pose>
+      <link name="helipad_link">
+        <visual name="helipad_circle">
+          <geometry>
+            <cylinder>
+              <radius>0.4</radius>
+              <length>0.002</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+          </material>
+        </visual>
+        <!-- Anillo exterior amarillo -->
+        <visual name="helipad_ring">
+          <pose>0 0 0.001 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.42</radius>
+              <length>0.001</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.8 0.7 0.0 1</ambient>
+            <diffuse>1.0 0.85 0.0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── EJES DE REFERENCIA XYZ ────────────────────────────────────────── -->
+    <!-- Poste X (ROJO) -->
+    <model name="eje_x">
+      <static>true</static>
+      <pose>0.8 0 0 0 0 0</pose>
+      <link name="eje_x_link">
+        <visual name="poste_x">
+          <pose>0 0 0.25 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.8 0.0 0.0 1</ambient>
+            <diffuse>1.0 0.1 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Poste Y (VERDE) -->
+    <model name="eje_y">
+      <static>true</static>
+      <pose>0 0.8 0 0 0 0</pose>
+      <link name="eje_y_link">
+        <visual name="poste_y">
+          <pose>0 0 0.25 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 0.7 0.0 1</ambient>
+            <diffuse>0.1 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Poste Z (AZUL) -->
+    <model name="eje_z">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="eje_z_link">
+        <visual name="poste_z">
+          <pose>0 0 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 0.0 0.8 1</ambient>
+            <diffuse>0.1 0.1 1.0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
   </world>
 </sdf>

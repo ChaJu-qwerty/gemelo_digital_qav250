@@ -9,7 +9,7 @@ from rclpy.parameter import Parameter
 # pyrefly: ignore [missing-import]
 from geometry_msgs.msg import PoseStamped
 # pyrefly: ignore [missing-import]
-from std_msgs.msg import Float32MultiArray, MultiArrayDimension
+from std_msgs.msg import Float32MultiArray, MultiArrayDimension, Bool
 
 try:
     from tf_transformations import quaternion_from_euler
@@ -21,9 +21,8 @@ except ImportError:
 try:
     from pymavlink import mavutil
 except ImportError:
-    print("[ERROR] pymavlink no encontrado.")
-    print("        Instalar: pip3 install pymavlink")
-    sys.exit(1)
+    # pymavlink no es necesario en modo demo
+    mavutil = None
 
 # ── Importar módulos del paquete ──────────────────────────────────────────────
 from .modelo_euler_lagrange import DroneModel
@@ -35,6 +34,7 @@ except ImportError:
 
 try:
     from gazebo_msgs.msg import EntityState
+    from gazebo_msgs.srv import SetEntityState
     HAS_GAZEBO_MSGS = True
 except ImportError:
     HAS_GAZEBO_MSGS = False
@@ -51,8 +51,12 @@ CANALES_MOTOR = [1, 2, 3, 4]
 
 class NodoGemeloDigital(Node):
     """
-    Nodo ROS 2 que conecta el Pixhawk físico con el modelo matemático
-    y publica el estado resultante para Gazebo.
+    Nodo ROS 2 que conecta el Pixhawk físico (o rutina demo) con el modelo
+    matemático y publica el estado resultante para Gazebo.
+    
+    Modos de operación:
+    - modo_demo=false (default): Conecta al Pixhawk vía MAVLink
+    - modo_demo=true: Lee PWM del topic /qav250/pwm_demo (publicado por rutina_demo.py)
     """
 
     def __init__(self):
@@ -97,17 +101,16 @@ class NodoGemeloDigital(Node):
         self.get_logger().info(f"Publicando pose en:    {params['topic_pose']}")
         self.get_logger().info(f"Publicando motores en: {params['topic_motores']}")
 
-        # Publisher opcional hacia Gazebo
+        # Service client opcional hacia Gazebo
         if HAS_GAZEBO_MSGS:
-            self.pub_gazebo = self.create_publisher(
-                EntityState,
-                "/gazebo/set_entity_state",
-                10,
+            self.cli_gazebo = self.create_client(
+                SetEntityState,
+                "/set_entity_state"
             )
-            self.get_logger().info("Gazebo EntityState publisher activo: /gazebo/set_entity_state")
+            self.get_logger().info("Gazebo SetEntityState client activo: /set_entity_state")
         else:
-            self.pub_gazebo = None
-            self.get_logger().warn("gazebo_msgs no disponible — sin publicación a Gazebo.")
+            self.cli_gazebo = None
+            self.get_logger().warn("gazebo_msgs no disponible — sin comunicación con Gazebo.")
 
         # ── Estado interno ────────────────────────────────────────────────────
         self.estado     = np.zeros(12)
@@ -115,18 +118,61 @@ class NodoGemeloDigital(Node):
         self.dt_nominal = 1.0 / params["frecuencia_hz"]
         self.params     = params
 
-        # PWM actual de cada motor (actualizado desde el hilo MAVLink)
+        # Calcular OMEGA_MAX dinámicamente según los parámetros del motor del YAML
+        motor_kv = self.params.get("motor_kv", 2300.0)
+        bateria_voltaje = self.params.get("bateria_voltaje", 14.8)
+        esc_eficiencia = self.params.get("esc_eficiencia", 0.85)
+        rpm_max = motor_kv * bateria_voltaje * esc_eficiencia
+        self.omega_max = rpm_max * (2.0 * np.pi / 60.0)
+
+        # PWM actual de cada motor (actualizado desde el hilo MAVLink o demo)
         self.pwm_actual = [1000.0] * 4
         self._lock      = threading.Lock()
+        
+        # ── Contadores de diagnóstico ─────────────────────────────────────────
+        self._nan_reset_count = 0
 
-        # ── Conexión MAVLink en hilo separado ─────────────────────────────────
-        self.conexion_mav = None
-        self._hilo_mavlink = threading.Thread(
-            target=self._bucle_mavlink,
-            daemon=True,
-            name="hilo_mavlink",
-        )
-        self._hilo_mavlink.start()
+        # ── Modo Demo o MAVLink ───────────────────────────────────────────────
+        self.modo_demo = params.get("modo_demo", False)
+        
+        if self.modo_demo:
+            # ── MODO DEMO: subscribirse al topic de PWM simulado ──────────────
+            self.get_logger().info("=" * 60)
+            self.get_logger().info("  🎮 MODO DEMO ACTIVADO — Sin conexión MAVLink")
+            self.get_logger().info("  Esperando PWM en /qav250/pwm_demo")
+            self.get_logger().info("  Ejecutar: ros2 run gemelo_digital_qav250 rutina_demo")
+            self.get_logger().info("=" * 60)
+            
+            self.sub_demo = self.create_subscription(
+                Float32MultiArray,
+                "/qav250/pwm_demo",
+                self._callback_pwm_demo,
+                10,
+            )
+            # Reset de estado al inicio de cada ciclo de la rutina demo
+            self.sub_reset = self.create_subscription(
+                Bool,
+                "/qav250/reset_modelo",
+                self._callback_reset_modelo,
+                10,
+            )
+            self.conexion_mav = None
+        else:
+            # ── MODO REAL: Conexión MAVLink en hilo separado ──────────────────
+            if mavutil is None:
+                self.get_logger().error(
+                    "pymavlink no instalado y modo_demo=false. "
+                    "Instalar: pip3 install pymavlink, o usar modo_demo=true"
+                )
+                return
+                
+            self.conexion_mav = None
+            self._hilo_mavlink = threading.Thread(
+                target=self._bucle_mavlink,
+                daemon=True,
+                name="hilo_mavlink",
+            )
+            self._hilo_mavlink.start()
 
         # ── Timer principal del nodo ──────────────────────────────────────────
         # Corre a la frecuencia definida en YAML y publica el estado
@@ -135,7 +181,8 @@ class NodoGemeloDigital(Node):
             self._callback_publicar,
         )
         self.get_logger().info(
-            f"Nodo listo a {params['frecuencia_hz']} Hz. Esperando datos MAVLink..."
+            f"Nodo listo a {params['frecuencia_hz']} Hz. "
+            f"{'Modo DEMO' if self.modo_demo else 'Esperando datos MAVLink'}..."
         )
 
     # ── PARÁMETROS ────────────────────────────────────────────────────────────
@@ -163,6 +210,7 @@ class NodoGemeloDigital(Node):
         self.declare_parameter("motor_kv",           2300.0)
         self.declare_parameter("bateria_voltaje",    14.8)
         self.declare_parameter("esc_eficiencia",     0.85)
+        self.declare_parameter("modo_demo",          False)
 
     def _cargar_parametros(self) -> dict:
         """Lee todos los parámetros declarados y los retorna como dict."""
@@ -188,7 +236,25 @@ class NodoGemeloDigital(Node):
             "motor_kv"          : self.get_parameter("motor_kv").value,
             "bateria_voltaje"   : self.get_parameter("bateria_voltaje").value,
             "esc_eficiencia"    : self.get_parameter("esc_eficiencia").value,
+            "modo_demo"         : self.get_parameter("modo_demo").value,
         }
+
+    # ── CALLBACK PWM DEMO ─────────────────────────────────────────────────────
+
+    def _callback_pwm_demo(self, msg: Float32MultiArray):
+        """Recibe PWM simulados del nodo rutina_demo."""
+        if len(msg.data) >= 4:
+            with self._lock:
+                for i in range(4):
+                    self.pwm_actual[i] = float(msg.data[i])
+
+    def _callback_reset_modelo(self, msg: Bool):
+        """Resetea el estado del modelo al origen (llamado por rutina_demo al reiniciar)."""
+        if msg.data:
+            self.get_logger().info("🔄 Reset de modelo solicitado — volviendo al origen")
+            self.modelo.reset()
+            self.estado = self.modelo.get_estado()
+            self.t_anterior = None  # Forzar recalculo de dt en el siguiente paso
 
     # ── HILO MAVLINK ──────────────────────────────────────────────────────────
 
@@ -271,8 +337,12 @@ class NodoGemeloDigital(Node):
                 dt = self.dt_nominal
         self.t_anterior = ahora
 
-        # PWM -> omega (rad/s)
-        omegas = [pwm_a_omega(p) for p in pwm]
+        # PWM -> omega (rad/s) usando OMEGA_MAX dinámico configurado
+        # Mapea PWM [1000, 2000] a [0, omega_max]
+        omegas = [
+            float(np.clip((p - 1000.0) / 1000.0, 0.0, 1.0) * self.omega_max)
+            for p in pwm
+        ]
         omega1, omega2, omega3, omega4 = omegas
 
         # Actualizar modelo con RK4
@@ -280,6 +350,17 @@ class NodoGemeloDigital(Node):
             self.estado = self.modelo.actualizar(omega1, omega2, omega3, omega4, dt)
         except Exception as e:
             self.get_logger().warn(f"Error en modelo: {e}")
+            return
+
+        # ── Detección de NaN — protección extra en el nodo ────────────────
+        if self.modelo.tiene_nan():
+            self._nan_reset_count += 1
+            self.get_logger().warn(
+                f"⚠️ NaN detectado en estado — reseteando modelo "
+                f"(reset #{self._nan_reset_count})"
+            )
+            self.modelo.reset()
+            self.estado = self.modelo.get_estado()
             return
 
         # Publicar pose en ROS 2 (y opcionalmente a Gazebo)
@@ -313,13 +394,13 @@ class NodoGemeloDigital(Node):
 
         self.pub_pose.publish(msg)
 
-        # Publicar también hacia Gazebo si está disponible
-        if self.pub_gazebo is not None:
-            gazebo_msg = EntityState()
-            gazebo_msg.name            = "drone_demo"
-            gazebo_msg.pose            = msg.pose
-            gazebo_msg.reference_frame = "world"
-            self.pub_gazebo.publish(gazebo_msg)
+        # Enviar estado a Gazebo si está disponible (asíncrono)
+        if self.cli_gazebo is not None and self.cli_gazebo.wait_for_service(timeout_sec=0):
+            req = SetEntityState.Request()
+            req.state.name = "drone_demo"
+            req.state.pose = msg.pose
+            req.state.reference_frame = "world"
+            self.cli_gazebo.call_async(req)
 
     def _publicar_motores(self, omegas: list, pwm: list):
         """
@@ -343,6 +424,10 @@ class NodoGemeloDigital(Node):
 
     def destroy_node(self):
         self.get_logger().info("Cerrando nodo gemelo digital...")
+        if self._nan_reset_count > 0:
+            self.get_logger().info(
+                f"Resets por NaN durante la sesión: {self._nan_reset_count}"
+            )
         super().destroy_node()
 
 
