@@ -1,0 +1,406 @@
+terminal 1 = "ina_demo-5] [INFO] [1780347100.133748370] [rutina_demo]: 🔄 Reiniciando rutina — reseteando pose al origen...
+[rutina_demo-5] [INFO] [1780347100.134692640] [rutina_demo]: ▶ Fase 1/12: DESPEGUE SUAVE (4s)
+[nodo_gemelo_digital-4] [INFO] [1780347100.135393852] [nodo_gemelo_digital]: 🔄 Reset de modelo solicitado — volviendo al origen
+[rutina_demo-5] [INFO] [1780347104.233588530] [rutina_demo]: ▶ Fase 2/12: HOVER ESTABLE (3s)
+[rutina_demo-5] [INFO] [1780347107.233700473] [rutina_demo]: ▶ Fase 3/12: ROLL IZQUIERDA (3s)
+[rutina_demo-5] [INFO] [1780347110.283729293] [rutina_demo]: ▶ Fase 4/12: ROLL DERECHA (3s)
+[rutina_demo-5] [INFO] [1780347113.333654055] [rutina_demo]: ▶ Fase 5/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347115.333716353] [rutina_demo]: ▶ Fase 6/12: PITCH ADELANTE (3s)
+[rutina_demo-5] [INFO] [1780347118.383797336] [rutina_demo]: ▶ Fase 7/12: PITCH ATRÁS (3s)
+[rutina_demo-5] [INFO] [1780347121.433776759] [rutina_demo]: ▶ Fase 8/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347123.433635570] [rutina_demo]: ▶ Fase 9/12: YAW HORARIO (3s)
+[rutina_demo-5] [INFO] [1780347126.433690696] [rutina_demo]: ▶ Fase 10/12: YAW ANTIHORARIO (3s)
+[rutina_demo-5] [INFO] [1780347129.483732039] [rutina_demo]: ▶ Fase 11/12: DESCENSO (4s)
+[rutina_demo-5] [INFO] [1780347133.533805332] [rutina_demo]: ▶ Fase 12/12: MOTORES APAGADOS (2s)
+[rutina_demo-5] [INFO] [1780347135.583843015] [rutina_demo]: 🔄 Reiniciando rutina — reseteando pose al origen...
+[rutina_demo-5] [INFO] [1780347135.584812809] [rutina_demo]: ▶ Fase 1/12: DESPEGUE SUAVE (4s)
+[nodo_gemelo_digital-4] [INFO] [1780347135.585491771] [nodo_gemelo_digital]: 🔄 Reset de modelo solicitado — volviendo al origen
+[rutina_demo-5] [INFO] [1780347139.683947594] [rutina_demo]: ▶ Fase 2/12: HOVER ESTABLE (3s)
+[rutina_demo-5] [INFO] [1780347142.683863149] [rutina_demo]: ▶ Fase 3/12: ROLL IZQUIERDA (3s)
+[rutina_demo-5] [INFO] [1780347145.733844154] [rutina_demo]: ▶ Fase 4/12: ROLL DERECHA (3s)
+[rutina_demo-5] [INFO] [1780347148.783816662] [rutina_demo]: ▶ Fase 5/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347150.833664383] [rutina_demo]: ▶ Fase 6/12: PITCH ADELANTE (3s)
+[rutina_demo-5] [INFO] [1780347153.884273359] [rutina_demo]: ▶ Fase 7/12: PITCH ATRÁS (3s)
+[rutina_demo-5] [INFO] [1780347156.883752529] [rutina_demo]: ▶ Fase 8/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347158.933717675] [rutina_demo]: ▶ Fase 9/12: YAW HORARIO (3s)
+[rutina_demo-5] [INFO] [1780347161.933857116] [rutina_demo]: ▶ Fase 10/12: YAW ANTIHORARIO (3s)
+[rutina_demo-5] [INFO] [1780347164.983801745] [rutina_demo]: ▶ Fase 11/12: DESCENSO (4s)
+[rutina_demo-5] [INFO] [1780347169.033672171] [rutina_demo]: ▶ Fase 12/12: MOTORES APAGADOS (2s)
+[rutina_demo-5] [INFO] [1780347171.033794158] [rutina_demo]: 🔄 Reiniciando rutina — reseteando pose al origen...
+[rutina_demo-5] [INFO] [1780347171.034722921] [rutina_demo]: ▶ Fase 1/12: DESPEGUE SUAVE (4s)
+[nodo_gemelo_digital-4] [INFO] [1780347171.035848569] [nodo_gemelo_digital]: 🔄 Reset de modelo solicitado — volviendo al origen
+[rutina_demo-5] [INFO] [1780347175.133943202] [rutina_demo]: ▶ Fase 2/12: HOVER ESTABLE (3s)
+[rutina_demo-5] [INFO] [1780347178.183748393] [rutina_demo]: ▶ Fase 3/12: ROLL IZQUIERDA (3s)
+[rutina_demo-5] [INFO] [1780347181.183860054] [rutina_demo]: ▶ Fase 4/12: ROLL DERECHA (3s)
+[rutina_demo-5] [INFO] [1780347184.233751097] [rutina_demo]: ▶ Fase 5/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347186.233712803] [rutina_demo]: ▶ Fase 6/12: PITCH ADELANTE (3s)
+[rutina_demo-5] [INFO] [1780347189.283869097] [rutina_demo]: ▶ Fase 7/12: PITCH ATRÁS (3s)
+[rutina_demo-5] [INFO] [1780347192.283821017] [rutina_demo]: ▶ Fase 8/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347194.333727978] [rutina_demo]: ▶ Fase 9/12: YAW HORARIO (3s)
+[rutina_demo-5] [INFO] [1780347197.383775726] [rutina_demo]: ▶ Fase 10/12: YAW ANTIHORARIO (3s)
+[rutina_demo-5] [INFO] [1780347200.433719924] [rutina_demo]: ▶ Fase 11/12: DESCENSO (4s)
+[rutina_demo-5] [INFO] [1780347204.433598152] [rutina_demo]: ▶ Fase 12/12: MOTORES APAGADOS (2s)
+[rutina_demo-5] [INFO] [1780347206.433809190] [rutina_demo]: 🔄 Reiniciando rutina — reseteando pose al origen...
+[rutina_demo-5] [INFO] [1780347206.435112566] [rutina_demo]: ▶ Fase 1/12: DESPEGUE SUAVE (4s)
+[nodo_gemelo_digital-4] [INFO] [1780347206.435467369] [nodo_gemelo_digital]: 🔄 Reset de modelo solicitado — volviendo al origen
+[rutina_demo-5] [INFO] [1780347210.533691859] [rutina_demo]: ▶ Fase 2/12: HOVER ESTABLE (3s)
+[rutina_demo-5] [INFO] [1780347213.533818697] [rutina_demo]: ▶ Fase 3/12: ROLL IZQUIERDA (3s)
+[rutina_demo-5] [INFO] [1780347216.583870147] [rutina_demo]: ▶ Fase 4/12: ROLL DERECHA (3s)
+[rutina_demo-5] [INFO] [1780347219.633847105] [rutina_demo]: ▶ Fase 5/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347221.683720497] [rutina_demo]: ▶ Fase 6/12: PITCH ADELANTE (3s)
+[rutina_demo-5] [INFO] [1780347224.733803436] [rutina_demo]: ▶ Fase 7/12: PITCH ATRÁS (3s)
+[rutina_demo-5] [INFO] [1780347227.783894012] [rutina_demo]: ▶ Fase 8/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347229.783947955] [rutina_demo]: ▶ Fase 9/12: YAW HORARIO (3s)
+[rutina_demo-5] [INFO] [1780347232.833822349] [rutina_demo]: ▶ Fase 10/12: YAW ANTIHORARIO (3s)
+[rutina_demo-5] [INFO] [1780347235.833811350] [rutina_demo]: ▶ Fase 11/12: DESCENSO (4s)
+[rutina_demo-5] [INFO] [1780347239.883777184] [rutina_demo]: ▶ Fase 12/12: MOTORES APAGADOS (2s)
+[rutina_demo-5] [INFO] [1780347241.883916650] [rutina_demo]: 🔄 Reiniciando rutina — reseteando pose al origen...
+[rutina_demo-5] [INFO] [1780347241.884951298] [rutina_demo]: ▶ Fase 1/12: DESPEGUE SUAVE (4s)
+[nodo_gemelo_digital-4] [INFO] [1780347241.885501226] [nodo_gemelo_digital]: 🔄 Reset de modelo solicitado — volviendo al origen
+[rutina_demo-5] [INFO] [1780347245.983730033] [rutina_demo]: ▶ Fase 2/12: HOVER ESTABLE (3s)
+[rutina_demo-5] [INFO] [1780347248.984190674] [rutina_demo]: ▶ Fase 3/12: ROLL IZQUIERDA (3s)
+[rutina_demo-5] [INFO] [1780347251.983653138] [rutina_demo]: ▶ Fase 4/12: ROLL DERECHA (3s)
+[rutina_demo-5] [INFO] [1780347255.033794086] [rutina_demo]: ▶ Fase 5/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347257.083719905] [rutina_demo]: ▶ Fase 6/12: PITCH ADELANTE (3s)
+[rutina_demo-5] [INFO] [1780347260.083737288] [rutina_demo]: ▶ Fase 7/12: PITCH ATRÁS (3s)
+[rutina_demo-5] [INFO] [1780347263.133664189] [rutina_demo]: ▶ Fase 8/12: HOVER TRANSICIÓN (2s)
+[rutina_demo-5] [INFO] [1780347265.133591120] [rutina_demo]: ▶ Fase 9/12: YAW HORARIO (3s)
+[rutina_demo-5] [INFO] [1780347268.183587132] [rutina_demo]: ▶ Fase 10/12: YAW ANTIHORARIO (3s)
+[rutina_demo-5] [INFO] [1780347271.233876015] [rutina_demo]: ▶ Fase 11/12: DESCENSO (4s)
+[rutina_demo-5] [INFO] [1780347275.233716747] [rutina_demo]: ▶ Fase 12/12: MOTORES APAGADOS (2s)
+[rutina_demo-5] [INFO] [1780347277.283675473] [rutina_demo]: 🔄 Reiniciando rutina — reseteando pose al origen...
+[rutina_demo-5] [INFO] [1780347277.284605087] [rutina_demo]: ▶ Fase 1/12: DESPEGUE SUAVE (4s)
+[nodo_gemelo_digital-4] [INFO] [1780347277.285725838] [nodo_gemelo_digital]: 🔄 Reset de modelo solicitado — volviendo al origen
+^C[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[nodo_gemelo_digital-4] [INFO] [1780347280.310832762] [nodo_gemelo_digital]: Cerrando nodo gemelo digital...
+[nodo_gemelo_digital-4] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[nodo_gemelo_digital-4] DroneModel inicializado con: m = 0.65 kg, k = 3.13e-05 N·s^2/rad^2
+[nodo_gemelo_digital-4] Estado del drone reseteado a cero
+[nodo_gemelo_digital-4] Estado del drone reseteado a cero
+[nodo_gemelo_digital-4] Estado del drone reseteado a cero
+[nodo_gemelo_digital-4] Estado del drone reseteado a cero
+[nodo_gemelo_digital-4] Estado del drone reseteado a cero
+[nodo_gemelo_digital-4] Estado del drone reseteado a cero
+[nodo_gemelo_digital-4] Estado del drone reseteado a cero
+[INFO] [gzclient-2]: process has finished cleanly [pid 7336]
+[rutina_demo-5] Traceback (most recent call last):
+[rutina_demo-5]   File "/home/bris/ros2_ws/install/gemelo_digital_qav250/lib/gemelo_digital_qav250/rutina_demo", line 33, in <module>
+[rutina_demo-5]     sys.exit(load_entry_point('gemelo-digital-qav250', 'console_scripts', 'rutina_demo')())
+[rutina_demo-5]   File "/home/bris/ros2_ws/build/gemelo_digital_qav250/gemelo_digital_qav250/rutina_demo.py", line 249, in main
+[rutina_demo-5]     rclpy.shutdown()
+[rutina_demo-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
+[rutina_demo-5]     _shutdown(context=context)
+[rutina_demo-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[rutina_demo-5]     return context.shutdown()
+[rutina_demo-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[rutina_demo-5]     self.__context.shutdown()
+[rutina_demo-5] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[nodo_gemelo_digital-4] Traceback (most recent call last):
+[nodo_gemelo_digital-4]   File "/home/bris/ros2_ws/install/gemelo_digital_qav250/lib/gemelo_digital_qav250/nodo_gemelo_digital", line 33, in <module>
+[nodo_gemelo_digital-4]     sys.exit(load_entry_point('gemelo-digital-qav250', 'console_scripts', 'nodo_gemelo_digital')())
+[nodo_gemelo_digital-4]   File "/home/bris/ros2_ws/build/gemelo_digital_qav250/gemelo_digital_qav250/nodo_gemelo_digital.py", line 436, in main
+[nodo_gemelo_digital-4]     rclpy.shutdown()
+[nodo_gemelo_digital-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
+[nodo_gemelo_digital-4]     _shutdown(context=context)
+[nodo_gemelo_digital-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[nodo_gemelo_digital-4]     return context.shutdown()
+[nodo_gemelo_digital-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[nodo_gemelo_digital-4]     self.__context.shutdown()
+[nodo_gemelo_digital-4] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[ERROR] [rutina_demo-5]: process has died [pid 7548, exit code 1, cmd '/home/bris/ros2_ws/install/gemelo_digital_qav250/lib/gemelo_digital_qav250/rutina_demo --ros-args'].
+[ERROR] [nodo_gemelo_digital-4]: process has died [pid 7514, exit code 1, cmd '/home/bris/ros2_ws/install/gemelo_digital_qav250/lib/gemelo_digital_qav250/nodo_gemelo_digital --ros-args --params-file /home/bris/ros2_ws/install/gemelo_digital_qav250/share/gemelo_digital_qav250/config/qav250_params.yaml --params-file /tmp/launch_params_nt_74k2_'].
+bris@bris-BoDE-WXX9:~/ros2_ws$ 
+"
+
+terminal 2: "  frame_id: world
+pose:
+  position:
+    x: 148.10001349139947
+    y: -101.62251443383265
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+header:
+  stamp:
+    sec: 1780347125
+    nanosec: 512673705
+  frame_id: world
+pose:
+  position:
+    x: 148.9726885221227
+    y: -102.08265524190847
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+header:
+  stamp:
+    sec: 1780347125
+    nanosec: 562655515
+  frame_id: world
+pose:
+  position:
+    x: 149.8418507535909
+    y: -102.5470787987669
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+header:
+  stamp:
+    sec: 1780347125
+    nanosec: 612672442
+  frame_id: world
+pose:
+  position:
+    x: 150.7081139501966
+    y: -103.01610470407465
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+header:
+  stamp:
+    sec: 1780347125
+    nanosec: 662669577
+  frame_id: world
+pose:
+  position:
+    x: 151.57126555701362
+    y: -103.48961354479377
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+header:
+  stamp:
+    sec: 1780347125
+    nanosec: 712712100
+  frame_id: world
+pose:
+  position:
+    x: 152.43151774017008
+    y: -103.96771727971864
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+header:
+  stamp:
+    sec: 1780347125
+    nanosec: 762725623
+  frame_id: world
+pose:
+  position:
+    x: 153.28792563053364
+    y: -104.44987832811825
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+header:
+  stamp:
+    sec: 1780347125
+    nanosec: 812638603
+  frame_id: world
+pose:
+  position:
+    x: 154.141158906355
+    y: -104.93645826592126
+    z: 0.0
+  orientation:
+    x: -0.0841129682298005
+    y: 0.07183926156207479
+    z: -0.0841129682298005
+    w: -0.9902974995673578
+---
+^Cbris@bris-BoDE-WXX9:~/ros2_ws$ 
+"
+
+terminal 3 : "- 1069.0355224609375
+- 1069.0355224609375
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 243.85678100585938
+- 243.85678100585938
+- 207.4990997314453
+- 207.4990997314453
+- 1080.4818115234375
+- 1080.4818115234375
+- 1068.482421875
+- 1068.482421875
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 245.47792053222656
+- 245.47792053222656
+- 205.87796020507812
+- 205.87796020507812
+- 1081.016845703125
+- 1081.016845703125
+- 1067.9473876953125
+- 1067.9473876953125
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 247.04689025878906
+- 247.04689025878906
+- 204.30897521972656
+- 204.30897521972656
+- 1081.53466796875
+- 1081.53466796875
+- 1067.4295654296875
+- 1067.4295654296875
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 248.56002807617188
+- 248.56002807617188
+- 202.7958526611328
+- 202.7958526611328
+- 1082.0340576171875
+- 1082.0340576171875
+- 1066.93017578125
+- 1066.93017578125
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 250.0069580078125
+- 250.0069580078125
+- 201.3489227294922
+- 201.3489227294922
+- 1082.5115966796875
+- 1082.5115966796875
+- 1066.45263671875
+- 1066.45263671875
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 251.3861846923828
+- 251.3861846923828
+- 199.9693145751953
+- 199.9693145751953
+- 1082.966796875
+- 1082.966796875
+- 1065.997314453125
+- 1065.997314453125
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 252.6988525390625
+- 252.6988525390625
+- 198.6570281982422
+- 198.6570281982422
+- 1083.4000244140625
+- 1083.4000244140625
+- 1065.564208984375
+- 1065.564208984375
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 253.93495178222656
+- 253.93495178222656
+- 197.42092895507812
+- 197.42092895507812
+- 1083.8079833984375
+- 1083.8079833984375
+- 1065.15625
+- 1065.15625
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 255.0933837890625
+- 255.0933837890625
+- 196.2621307373047
+- 196.2621307373047
+- 1084.1903076171875
+- 1084.1903076171875
+- 1064.7738037109375
+- 1064.7738037109375
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 256.1719055175781
+- 256.1719055175781
+- 195.1839599609375
+- 195.1839599609375
+- 1084.5462646484375
+- 1084.5462646484375
+- 1064.41796875
+- 1064.41796875
+---
+^Cbris@bris-BoDE-WXX9:~/ros2_ws$ 
+"

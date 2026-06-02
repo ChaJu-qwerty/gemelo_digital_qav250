@@ -1,0 +1,102 @@
+/**:
+  ros__parameters:
+    #PARAMETROS FISICOS DEL DRONE
+    # ── Masa total del drone [kg] ────────────────────────────────
+    # NOTA: Si el dron está restringido en el soporte FFT GYRO, la masa total 'm'
+    # se usa en el modelo de traslación (X, Y, Z). Reemplazar con medición real.
+    m: 0.580        # [PUESTO - PESADO IRL] reemplazar con medición real
+
+    # ── Geometría [m] ────────────────────────────────────────────
+    # Distancia del centro de masa al eje de cada rotor (brazo)
+    l: 0.1261425        # [PUESTO - PROM SOLID] pendiente
+
+    # ── Momentos de inercia [kg·m²] ──────────────────────────────
+    # ¡CRÍTICO PARA LA VALIDACIÓN!
+    # Como el dron está montado sobre la base rotatoria del FFT GYRO, las inercias
+    # medidas dependerán del sistema completo:
+    #   I_total = I_dron (de SolidWorks) + I_soporte (parte móvil del FFT GYRO)
+    # Deben estimar o medir la inercia que agrega el soporte móvil en cada eje
+    # y sumarla a los momentos del dron para que las dinámicas estimadas coincidan.
+    #FALTARIA CHECAR INTEGRARLE LA INERCIA DEL GYRO AL MODELO MATEMÁTICO.
+    #CHECAR SI LAS INERCIAS EN LOS EJES COINCIDEN O SI LOS EJES ESTAN INVERTIDOS
+    Ixx: 0.003069   # roll  [kg·m²]
+    Iyy: 0.004216   # pitch [kg·m²]
+    Izz: 0.002612   # yaw   [kg·m²]
+
+
+    # ── Coeficientes aerodinámicos ───────────────────────────────
+    # k: coeficiente de empuje   F = k * omega²   [N·s²/rad²]
+    # b: coeficiente de arrastre Q = b * omega²   [N·m·s²/rad²]
+    #
+    # ⚠️ NOTA IMPORTANTE SOBRE k:
+    # Si en la vida real tu dron hace hover al 30% de throttle (PWM = 1300 µs),
+    # eso significa que a esa potencia el empuje contrarresta exactamente al peso:
+    #   4 * k * omega_hover² = m * g
+    # Como omega_hover = 0.30 * omega_max = 0.30 * 3030 ≈ 909 rad/s:
+    #   k = (0.58 * 9.81) / (4 * 909²) = 1.72e-6 N·s²/rad²
+    #
+    # Con este k = 1.72e-6:
+    #   - Hover ocurre al 30% (PWM = 1300 µs)
+    #   - Empieza a subir al 35% (PWM = 1350 µs)
+    #   - En ralentí (PWM = 1084 µs / 8.4% throttle), el empuje es mínimo (0.44 N) y el dron NO se levanta del piso.
+    k: 1.72e-06     # [CORREGIDO para hover al 30% de throttle]
+
+    b: 2.75e-08     # [CORREGIDO proporcionalmente a k: b ≈ 0.016 × k = 0.016 × 1.72e-6]
+    # b: coeficiente de arrastre Q = b × omega²   [N·m·s²/rad²]
+    # Relación empírica para hélices 5": b ≈ 0.016 × k
+
+    # ── Inercia del rotor [kg·m²] ────────────────────────────────
+    # Motor RS2205 2300KV
+    # Cómo obtenerlo: datasheet del motor o medir experimentalmente
+    # CHECAR / CORREGIR ESTO
+    Ir: 6.00e-05    # [DATASHEET] pendiente NO LO HE ENCONTRADO EL DATO BIEN 
+
+    # ── Arrastre aerodinámico traslacional [kg/s] ────────────────
+    # Fuerza de arrastre en cada eje: F_arrastre = A * velocidad
+    # Poner 0.0 si no se tiene dato o si se quiere ignorar este efecto
+    Ax: 0.15        # [ESTIMADO] arrastre en X
+    Ay: 0.15        # [ESTIMADO] arrastre en Y
+    Az: 0.15        # [ESTIMADO] arrastre en Z
+
+
+    # PARÁMETROS DE CONEXIÓN MAVLink
+    # Modo de conexión: "udp" (con QGroundControl) o "serial" (directo)
+    mavlink_modo: "udp"
+
+    # Puerto serial — solo aplica si mavlink_modo = "serial"
+    # Windows: "COM3", "COM4", etc.
+    # Linux:   "/dev/ttyUSB0", "/dev/ttyACM0"
+    mavlink_puerto: "COM3"
+
+    # IP de escucha UDP — usar "0.0.0.0" para escuchar en toda la red
+    mavlink_udp_ip: "0.0.0.0"
+
+    # Puerto UDP — solo aplica si mavlink_modo = "udp"
+    # QGC transmite en 14550; este nodo escucha en 14551
+    mavlink_udp_puerto: 14551
+
+
+    # PARÁMETROS DEL NODO ROS 2
+    # Frecuencia de publicación del estado [Hz]
+    # Debe coincidir aprox. con la tasa de SERVO_OUTPUT_RAW del Pixhawk (~20Hz)
+    frecuencia_hz: 20.0
+
+    # Topic donde se publica la pose (para Gazebo / RViz)
+    topic_pose: "/qav250/pose"
+
+    # Topic donde se publican las velocidades angulares de motores
+    topic_motores: "/qav250/motores"
+
+
+    # PARÁMETROS DEL MOTOR RS2205 2300KV
+    motor_kv: 2300.0         # KV rating del motor [RPM/V]
+    bateria_voltaje: 14.8   # Voltaje de la batería 4S [V]
+    esc_eficiencia: 0.85    # Eficiencia estimada del ESC [0-1]
+
+
+    # MODO DE OPERACIÓN
+    # modo_demo: si es true, el nodo NO intenta conectar al Pixhawk.
+    # En su lugar, espera señales PWM en el topic /qav250/pwm_demo
+    # que son publicadas por el nodo rutina_demo.
+    # Usar true para probar el gemelo digital sin hardware.
+    modo_demo: true
