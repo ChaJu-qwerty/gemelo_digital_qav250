@@ -12,23 +12,23 @@
 
     # ── Momentos de inercia [kg·m²] ──────────────────────────────
     # ¡CRÍTICO PARA LA VALIDACIÓN!
-    # Como el dron está montado sobre la base rotatoria del FFT GYRO, las inercias
-    # medidas dependerán del sistema completo:
-    #   I_total = I_dron (de SolidWorks) + I_soporte (parte móvil del FFT GYRO)
-    # Deben estimar o medir la inercia que agrega el soporte móvil en cada eje
-    # y sumarla a los momentos del dron para que las dinámicas estimadas coincidan.
-    #FALTARIA CHECAR INTEGRARLE LA INERCIA DEL GYRO AL MODELO MATEMÁTICO.
-    #CHECAR SI LAS INERCIAS EN LOS EJES COINCIDEN O SI LOS EJES ESTAN INVERTIDOS
-    Ixx: 0.003069   # roll  [kg·m²]
-    Iyy: 0.004216   # pitch [kg·m²]
-    Izz: 0.002612   # yaw   [kg·m²]
+    # CORRECCIÓN DE INERCIAS (SolidWorks vs ROS 2):
+    # 1. Se deben usar los valores del Centro de Masa (Lxx, Lyy, Lzz en SW), NO los del sistema de salida.
+    # 2. Los ejes en SolidWorks y ROS/Gazebo NO coinciden:
+    #    - ROS Z (Yaw) es el de mayor inercia. En SW la mayor es Lyy. -> ROS Z = SW Y
+    #    - ROS X (Roll) suele ser la de menor inercia. En SW la menor es Lzz. -> ROS X = SW Z
+    #    - ROS Y (Pitch) es la inercia media. En SW la media es Lxx. -> ROS Y = SW X
+    # Valores convertidos de g·mm² a kg·m² (multiplicando por 1e-9):
+    Ixx: 0.002200   # roll  [kg·m²] (Viene de Lzz en SolidWorks)
+    Iyy: 0.002640   # pitch [kg·m²] (Viene de Lxx en SolidWorks)
+    Izz: 0.004198   # yaw   [kg·m²] (Viene de Lyy en SolidWorks)
 
 
     # ── Coeficientes aerodinámicos ───────────────────────────────
     # k: coeficiente de empuje   F = k * omega²   [N·s²/rad²]
     # b: coeficiente de arrastre Q = b * omega²   [N·m·s²/rad²]
     #
-    # ⚠️ NOTA IMPORTANTE SOBRE k:
+    # NOTA IMPORTANTE SOBRE k:
     # Si en la vida real tu dron hace hover al 30% de throttle (PWM = 1300 µs),
     # eso significa que a esa potencia el empuje contrarresta exactamente al peso:
     #   4 * k * omega_hover² = m * g
@@ -99,4 +99,4 @@
     # En su lugar, espera señales PWM en el topic /qav250/pwm_demo
     # que son publicadas por el nodo rutina_demo.
     # Usar true para probar el gemelo digital sin hardware.
-    modo_demo: true
+    modo_demo: false

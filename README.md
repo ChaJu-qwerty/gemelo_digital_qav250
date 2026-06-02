@@ -1,12 +1,12 @@
 # Gemelo Digital QAV250 🚁
 
-Repositorio del **gemelo digital** del cuadricóptero QAV250 montado sobre el banco de pruebas rotatorio **FFT GYRO**. El proyecto implementa el modelo matemático de Euler-Lagrange (Luukkonen, 2011) en un nodo de ROS 2 y sincroniza el estado en tiempo real dentro de Gazebo Classic 11.
+Repositorio del gemelo digital del cuadricóptero QAV250 montado sobre el banco de pruebas rotatorio FFT GYRO. El proyecto implementa el modelo matemático de Euler-Lagrange (Luukkonen, 2011) en un nodo de ROS 2 y sincroniza el estado en tiempo real dentro de Gazebo Classic 11.
 
 ---
 
 ## 🛠️ Descripción General
 
-El gemelo digital recibe las señales PWM de los motores directamente desde el Pixhawk del dron físico mediante MAVLink, mapea las señales a velocidades angulares $\omega$ (rad/s), integra las ecuaciones de movimiento usando un integrador Runge-Kutta 4 (RK4) de 20 Hz, y publica la pose estimada (`/qav250/pose`) y el estado de los motores. Gazebo recibe la pose y mueve el modelo 3D del dron de manera asíncrona y no bloqueante.
+El gemelo digital recibe las señales PWM de los motores directamente desde el Pixhawk del dron físico mediante MAVLink, mapea las señales a velocidades angulares w (rad/s), integra las ecuaciones de movimiento usando un integrador Runge-Kutta 4 (RK4) de 20 Hz, y publica la pose estimada (/qav250/pose) y el estado de los motores. Gazebo recibe la pose y mueve el modelo 3D del dron de manera asíncrona y no bloqueante.
 
 ```text
 Pixhawk (Dron Físico)
@@ -31,15 +31,15 @@ Gazebo Classic 11  ──►  Visualización 3D en tiempo real (brazos color-cod
 
 | Módulo | Estado | Notas |
 |--------|--------|-------|
-| **Modelo Euler-Lagrange** | ✅ Completo | Ecuaciones de Luukkonen en X-frame. |
-| **Integrador Numérico RK4** | ✅ Completo | Resolviendo dinámicas traslacionales y rotacionales a 20 Hz. |
-| **Captura MAVLink** | ✅ Completo | Soporta comunicación por UDP (con QGC) y Serial directa. |
-| **Calibración de Motor ($k, b$)** | ✅ Calibrado | Coeficiente $k = 1.72 \times 10^{-6}$ calibrado para hover al 30% (PWM = 1300 µs) y despegue al 35%, idéntico al dron real. |
-| **Sincronización de Gazebo** | ✅ Optimizado | Llamadas asíncronas no bloqueantes. Limpieza de procesos zombies previa al lanzamiento. |
-| **Telemetría Humana (`ver_pose`)**| ✅ Completo | Script interactivo que traduce cuaterniones a grados (Roll, Pitch, Yaw) y metros en tiempo real. |
-| **Instalador Unificado** | ✅ Completo | `instalar_dependencias.sh` descarga e integra ROS 2 Humble, Gazebo 11, librerías Python y configura variables de entorno. |
-| **Inercia del FFT GYRO** | ⏳ Pendiente | Integrar la inercia medida de la parte móvil del soporte al modelo matemático en `qav250_params.yaml`. |
-| **Lectura FFT GYRO vía COM** | ⏳ Pendiente | Nodo para suscribir y comparar los ángulos reales medidos por el banco contra los del gemelo. |
+| **Modelo Euler-Lagrange** | Completo | Ecuaciones de Luukkonen en X-frame. |
+| **Integrador Numérico RK4** | Completo | Resolviendo dinámicas traslacionales y rotacionales a 20 Hz. |
+| **Captura MAVLink** | Completo | Soporta comunicación por UDP (con QGC) y Serial directa. |
+| **Calibración de Motor ($k, b$)** | Calibrado | Coeficiente $k = 1.72 \times 10^{-6}$ calibrado para hover al 30% (PWM = 1300 µs) y despegue al 35%, idéntico al dron real. |
+| **Sincronización de Gazebo** | Optimizado | Llamadas asíncronas no bloqueantes. Limpieza de procesos zombies previa al lanzamiento. |
+| **Telemetría Humana (ver_pose)**| Completo | Script interactivo que traduce cuaterniones a grados (Roll, Pitch, Yaw) y metros en tiempo real. |
+| **Instalador Unificado** | Completo | instalar_dependencias.sh descarga e integra ROS 2 Humble, Gazebo 11, librerías Python y configura variables de entorno. |
+| **Inercia del FFT GYRO** | Pendiente | Integrar la inercia medida de la parte móvil del soporte al modelo matemático en qav250_params.yaml. |
+| **Lectura FFT GYRO vía COM** | Pendiente | Nodo para suscribir y comparar los ángulos reales medidos por el banco contra los del gemelo. |
 
 ---
 
@@ -77,7 +77,7 @@ gemelo_digital_qav250/
 
 ## ⚙️ Guía de Inicio Rápido
 
-Consulta el archivo [`src_tw/README.md`](src_tw/README.md) para ver la guía detallada paso a paso de instalación, compilación, ejecución y calibración de parámetros físicos del gemelo digital.
+Consulta el archivo src_tw/README.md para ver la guía detallada paso a paso de instalación, compilación, ejecución y calibración de parámetros físicos del gemelo digital.
 
 ---
 

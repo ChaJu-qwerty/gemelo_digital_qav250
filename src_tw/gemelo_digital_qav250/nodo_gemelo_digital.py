@@ -138,7 +138,7 @@ class NodoGemeloDigital(Node):
         if self.modo_demo:
             # ── MODO DEMO: subscribirse al topic de PWM simulado ──────────────
             self.get_logger().info("=" * 60)
-            self.get_logger().info("  🎮 MODO DEMO ACTIVADO — Sin conexión MAVLink")
+            self.get_logger().info("  MODO DEMO ACTIVADO — Sin conexión MAVLink")
             self.get_logger().info("  Esperando PWM en /qav250/pwm_demo")
             self.get_logger().info("  Ejecutar: ros2 run gemelo_digital_qav250 rutina_demo")
             self.get_logger().info("=" * 60)
@@ -251,7 +251,7 @@ class NodoGemeloDigital(Node):
     def _callback_reset_modelo(self, msg: Bool):
         """Resetea el estado del modelo al origen (llamado por rutina_demo al reiniciar)."""
         if msg.data:
-            self.get_logger().info("🔄 Reset de modelo solicitado — volviendo al origen")
+            self.get_logger().info("Reset de modelo solicitado — volviendo al origen")
             self.modelo.reset()
             self.estado = self.modelo.get_estado()
             self.t_anterior = None  # Forzar recalculo de dt en el siguiente paso
@@ -356,7 +356,7 @@ class NodoGemeloDigital(Node):
         if self.modelo.tiene_nan():
             self._nan_reset_count += 1
             self.get_logger().warn(
-                f"⚠️ NaN detectado en estado — reseteando modelo "
+                f"WARNING: NaN detectado en estado — reseteando modelo "
                 f"(reset #{self._nan_reset_count})"
             )
             self.modelo.reset()
@@ -444,7 +444,8 @@ def main(args=None):
         pass
     finally:
         nodo.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == "__main__":

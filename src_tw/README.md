@@ -1,16 +1,16 @@
 # gemelo_digital_qav250 — Paquete ROS 2
 
-Este paquete de ROS 2 Humble implementa el **gemelo digital** del cuadricóptero QAV250 montado sobre el banco de pruebas rotacional **FFT GYRO**. Integra las ecuaciones físicas de Euler-Lagrange mediante métodos de Runge-Kutta 4 (RK4) y sincroniza de manera visual el modelo 3D en Gazebo Classic 11 en tiempo real.
+Este paquete de ROS 2 Humble implementa el gemelo digital del cuadricóptero QAV250 montado sobre el banco de pruebas rotacional FFT GYRO. Integra las ecuaciones físicas de Euler-Lagrange mediante métodos de Runge-Kutta 4 (RK4) y sincroniza de manera visual el modelo 3D en Gazebo Classic 11 en tiempo real.
 
 ---
 
 ## 🚀 Cambios y Mejoras Recientes
 
-1. **Calibración Física del Empuje (`k`)**: Se ajustó el coeficiente de empuje a $k = 1.72 \times 10^{-6}$ en `qav250_params.yaml`. Esto alinea la simulación para que el hover del dron ocurra al **30% de aceleración (PWM = 1300 µs)** y empiece a subir al **35% (PWM = 1350 µs)**, idéntico al comportamiento real del dron. A velocidades de ralentí/armado (PWM ~1084 µs / 8.4% de throttle), el dron ya no despega ni deriva del suelo en la simulación.
-2. **Script de Telemetría en Tiempo Real (`ver_pose`)**: Se implementó una herramienta de consola que lee el topic `/qav250/pose`, convierte automáticamente el cuaternión de orientación a ángulos de Euler en **Grados (Roll, Pitch, Yaw)** y mantiene la posición en **Metros**, refrescando la consola de forma limpia.
-3. **Cierre Automático de Procesos Zombies**: Se incorporó un limpiador automático en los archivos de lanzamiento (`launch`) para matar cualquier instancia previa huérfana de `gzserver` o `gzclient` antes de iniciar la simulación, resolviendo los cuelgues de inicialización y errores `exit code 255` de Gazebo.
-4. **Física No Bloqueante**: La comunicación del nodo con el servicio `/set_entity_state` de Gazebo se rediseñó a llamadas asíncronas libres de bloqueos. Si Gazebo se ralentiza al iniciar, el solucionador matemático del gemelo digital continúa procesando la física de fondo sin interrupciones a sus 20 Hz nominales.
-5. **Script de Instalación Unificado**: `instalar_dependencias.sh` ahora instala e integra de forma automática todo el entorno necesario (ROS 2 Humble, Gazebo Classic 11, dependencias del sistema y de Python).
+1. **Calibración Física del Empuje (k)**: Se ajustó el coeficiente de empuje a k = 1.72 x 10^-6 en qav250_params.yaml. Esto alinea la simulación para que el hover del dron ocurra al 30% de aceleración (PWM = 1300 µs) y empiece a subir al 35% (PWM = 1350 µs), idéntico al comportamiento real del dron. A velocidades de ralentí/armado (PWM ~1084 µs / 8.4% de throttle), el dron ya no despega ni deriva del suelo en la simulación.
+2. **Script de Telemetría en Tiempo Real (ver_pose)**: Se implementó una herramienta de consola que lee el topic /qav250/pose, convierte automáticamente el cuaternión de orientación a ángulos de Euler en Grados (Roll, Pitch, Yaw) y mantiene la posición en Metros, refrescando la consola de forma limpia.
+3. **Cierre Automático de Procesos Zombies**: Se incorporó un limpiador automático en los archivos de lanzamiento (launch) para matar cualquier instancia previa huérfana de gzserver o gzclient antes de iniciar la simulación, resolviendo los cuelgues de inicialización y errores exit code 255 de Gazebo.
+4. **Física No Bloqueante**: La comunicación del nodo con el servicio /set_entity_state de Gazebo se rediseñó a llamadas asíncronas libres de bloqueos. Si Gazebo se ralentiza al iniciar, el solucionador matemático del gemelo digital continúa procesando la física de fondo sin interrupciones a sus 20 Hz nominales.
+5. **Script de Instalación Unificado**: instalar_dependencias.sh ahora instala e integra de forma automática todo el entorno necesario (ROS 2 Humble, Gazebo Classic 11, dependencias del sistema y de Python).
 
 ---
 
@@ -23,7 +23,7 @@ src_tw/
 │   ├── captura_pwm.py              # Conexión MAVLink y conversión PWM -> ω (rad/s)
 │   ├── modelo_euler_lagrange.py    # Resolvedor de física (Ecuaciones de Luukkonen 2011)
 │   ├── nodo_gemelo_digital.py      # Nodo ROS 2 orquestador principal
-│   ├── ver_pose.py                 # [NUEVO] Nodo de telemetría Roll/Pitch/Yaw en grados y metros
+│   ├── ver_pose.py                 # Nodo de telemetría Roll/Pitch/Yaw en grados y metros
 │   └── config/
 │       └── qav250_params.yaml      # Parámetros físicos, aerodinámicos y de conexión
 ├── launch/
@@ -39,7 +39,7 @@ src_tw/
 ├── package.xml                     # Metadatos del paquete ROS 2
 ├── setup.py                        # Script de instalación setuptools y scripts ejecutables
 ├── setup.cfg
-└── instalar_dependencias.sh        # [NUEVO] Instala ROS, Gazebo, librerías y configura variables
+└── instalar_dependencias.sh        # Instala ROS, Gazebo, librerías y configura variables
 ```
 
 ---
@@ -47,7 +47,7 @@ src_tw/
 ## 🛠️ Instalación y Configuración Completa
 
 ### 1. Instalar dependencias del sistema y de Python
-Ejecuta el script unificado de instalación. Este instalará **ROS 2 Humble, Gazebo Classic 11** y todos los paquetes requeridos si no los tienes en tu sistema:
+Ejecuta el script unificado de instalación. Este instalará ROS 2 Humble, Gazebo Classic 11 y todos los paquetes requeridos si no los tienes en tu sistema:
 ```bash
 cd /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw
 bash instalar_dependencias.sh
@@ -95,8 +95,8 @@ ros2 run gemelo_digital_qav250 ver_pose
 ```
 
 ### Unidades utilizadas:
-* **Posición ($X, Y, Z$)**: Expresadas en **Metros ($m$)**.
-* **Orientación (Roll, Pitch, Yaw)**: Expresadas en **Grados ($^{\circ}$)**.
+* **Posición (X, Y, Z)**: Expresadas en Metros (m).
+* **Orientación (Roll, Pitch, Yaw)**: Expresadas en Grados (°).
 
 ```text
 ==================================================
@@ -118,10 +118,10 @@ ros2 run gemelo_digital_qav250 ver_pose
 
 ## ⚙️ Calibración de Parámetros Físicos
 
-El comportamiento dinámico se puede reconfigurar de manera inmediata editando el archivo `qav250_params.yaml` (los cambios surten efecto al reiniciar el nodo gracias a `--symlink-install`):
+El comportamiento dinámico se puede reconfigurar de manera inmediata editando el archivo qav250_params.yaml (los cambios surten efecto al reiniciar el nodo gracias a --symlink-install):
 
-* **`m`** (0.580 kg): Masa total medida en báscula.
-* **`Ixx`, `Iyy`, `Izz`**: Momentos de inercia del sistema combinado. **Nota**: Deben sumar los momentos calculados en SolidWorks del dron más la inercia que añade la parte móvil del soporte **FFT GYRO** en sus respectivos ejes.
-* **`k`** ($1.72 \times 10^{-6}$): Coeficiente de empuje. Calibrado para hover al 30%.
-* **`b`** ($2.75 \times 10^{-8}$): Coeficiente de torque de Yaw del motor.
-* **`Ax`, `Ay`, `Az`** (0.15): Coeficiente de arrastre traslacional del aire (evita el deslizamiento infinito por inercia).
+* **m** (0.580 kg): Masa total medida en báscula.
+* **Ixx, Iyy, Izz**: Momentos de inercia del sistema combinado. Nota: Deben sumar los momentos calculados en SolidWorks del dron más la inercia que añade la parte móvil del soporte FFT GYRO en sus respectivos ejes.
+* **k** (1.72 x 10^-6): Coeficiente de empuje. Calibrado para hover al 30%.
+* **b** (2.75 x 10^-8): Coeficiente de torque de Yaw del motor.
+* **Ax, Ay, Az** (0.15): Coeficiente de arrastre traslacional del aire (evita el deslizamiento infinito por inercia).

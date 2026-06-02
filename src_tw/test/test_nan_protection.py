@@ -49,9 +49,9 @@ def test_nan_protection():
                   f"|  RPY=({np.degrees(estado[3]):.1f}°, {np.degrees(estado[4]):.1f}°, {np.degrees(estado[5]):.1f}°)")
 
     if not nan_encontrado:
-        print(f"\n✅ PROTECCIÓN NaN FUNCIONA: 200 pasos sin NaN con PWM problemáticos")
+        print(f"\n[OK] PROTECCIÓN NaN FUNCIONA: 200 pasos sin NaN con PWM problemáticos")
     else:
-        print(f"\n❌ FALLO: NaN apareció aún con protección")
+        print(f"\n[ERROR] FALLO: NaN apareció aún con protección")
         return False
 
     # Test 2: Simular condiciones extremas (PWM muy desbalanceados)
@@ -71,7 +71,7 @@ def test_nan_protection():
                   f"{np.degrees(estado[4]):.1f}°, {np.degrees(estado[5]):.1f}°)")
 
     if not nan_encontrado:
-        print(f"✅ PROTECCIÓN NaN FUNCIONA: PWM extremos manejados correctamente")
+        print(f"[OK] PROTECCIÓN NaN FUNCIONA: PWM extremos manejados correctamente")
     
     return not nan_encontrado
 
