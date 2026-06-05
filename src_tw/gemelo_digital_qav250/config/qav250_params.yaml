@@ -39,9 +39,9 @@
     #   - Hover ocurre al 30% (PWM = 1300 µs)
     #   - Empieza a subir al 35% (PWM = 1350 µs)
     #   - En ralentí (PWM = 1084 µs / 8.4% throttle), el empuje es mínimo (0.44 N) y el dron NO se levanta del piso.
-    k: 1.72e-06     # [CORREGIDO para hover al 30% de throttle]
+    k: 1.06e-06     # [AJUSTADO para hover real a PWM ~1380 us]
 
-    b: 2.75e-08     # [CORREGIDO proporcionalmente a k: b ≈ 0.016 × k = 0.016 × 1.72e-6]
+    b: 1.70e-08     # [AJUSTADO proporcionalmente a k: b ≈ 0.016 × k]
     # b: coeficiente de arrastre Q = b × omega²   [N·m·s²/rad²]
     # Relación empírica para hélices 5": b ≈ 0.016 × k
 
@@ -54,9 +54,9 @@
     # ── Arrastre aerodinámico traslacional [kg/s] ────────────────
     # Fuerza de arrastre en cada eje: F_arrastre = A * velocidad
     # Poner 0.0 si no se tiene dato o si se quiere ignorar este efecto
-    Ax: 0.15        # [ESTIMADO] arrastre en X
-    Ay: 0.15        # [ESTIMADO] arrastre en Y
-    Az: 0.15        # [ESTIMADO] arrastre en Z
+    Ax: 2.50        # [AJUSTADO] Arrastre alto para que 2 grados de inclinación no generen 30m de deriva
+    Ay: 2.50        # [AJUSTADO] Arrastre alto en Y
+    Az: 1.50        # [AJUSTADO] Arrastre alto en Z para amortiguar subidas bruscas
 
 
     # PARÁMETROS DE CONEXIÓN MAVLink
@@ -99,57 +99,5 @@
     # En su lugar, espera señales PWM en el topic /qav250/pwm_demo
     # que son publicadas por el nodo rutina_demo.
     # Usar true para probar el gemelo digital sin hardware.
-<<<<<<< Updated upstream
-    modo_demo: true
-=======
     modo_demo: false
 
-
-    # MAPEO DE CANALES DEL PIXHAWK A MOTORES DEL MODELO
-    # Este parametro corrige los "movimientos en eje incorrecto" sin tocar el codigo.
-    #
-    # Significado: motor_map: [A, B, C, D]
-    #   A = canal Pixhawk que alimenta M1 del modelo (Frontal Derecho  CCW)
-    #   B = canal Pixhawk que alimenta M2 del modelo (Trasero Izquierdo CCW)
-    #   C = canal Pixhawk que alimenta M3 del modelo (Frontal Izquierdo CW)
-    #   D = canal Pixhawk que alimenta M4 del modelo (Trasero Derecho   CW)
-    #
-    # COMO ENCONTRAR TU MAPEO CORRECTO:
-    # 1. Abrir QGroundControl > Vehicle Setup > Motors
-    # 2. Activar "Test Motor" y probar Motor 1 (canal 1 del Pixhawk)
-    # 3. Ver cual motor fisico del dron gira (ej: el frontal izquierdo)
-    # 4. Ese motor fisico corresponde a M3 en el modelo, entonces C=1
-    # 5. Repetir para canales 2, 3 y 4 y armar el mapa completo
-    #
-    # VALORES TIPICOS PARA QAV250 CON PX4:
-    #   [1, 2, 3, 4] -> PX4 estandar (canal 1=FR, 2=RL, 3=FL, 4=RR)
-    #   [3, 4, 1, 2] -> Si el dron se mueve en Y cuando deberia en X
-    #   [1, 4, 3, 2] -> Si roll y yaw estan invertidos
-    #
-    # Empezar con [1, 2, 3, 4] y ajustar segun la prueba de QGroundControl.
-    motor_map: [1, 2, 3, 4]
-
-
-    # ── GANANCIAS PID DE FALLBACK (actitud) ─────────────────────────
-    # Estos valores se usan INMEDIATAMENTE al arrancar el nodo para que
-    # el gemelo sea estable desde el primer instante.
-    # Si llegan mensajes PARAM_VALUE del Pixhawk via MAVLink, estos
-    # valores se sobreescriben automaticamente en tiempo real.
-    #
-    # Formato PX4: Salida = K * (P * error + I * integral - D * derivada)
-    # Valores tipicos PX4 para QAV250 (pre-autotuning):
-    pid_rollrate_k:  1.0
-    pid_rollrate_p:  0.15
-    pid_rollrate_i:  0.20
-    pid_rollrate_d:  0.003
-
-    pid_pitchrate_k: 1.0
-    pid_pitchrate_p: 0.15
-    pid_pitchrate_i: 0.20
-    pid_pitchrate_d: 0.003
-
-    pid_yawrate_k:   1.0
-    pid_yawrate_p:   0.20
-    pid_yawrate_i:   0.10
-    pid_yawrate_d:   0.0
->>>>>>> Stashed changes

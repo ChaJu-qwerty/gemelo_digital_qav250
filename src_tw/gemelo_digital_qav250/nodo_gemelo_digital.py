@@ -571,21 +571,9 @@ class NodoGemeloDigital(Node):
                 self.estado = self.modelo.get_estado()
                 return
 
-<<<<<<< Updated upstream
-        # ── Detección de NaN — protección extra en el nodo ────────────────
-        if self.modelo.tiene_nan():
-            self._nan_reset_count += 1
-            self.get_logger().warn(
-                f"⚠️ NaN detectado en estado — reseteando modelo "
-                f"(reset #{self._nan_reset_count})"
-            )
-            self.modelo.reset()
-            self.estado = self.modelo.get_estado()
-=======
             omegas_pub = [omega1, omega2, omega3, omega4]
             self._publicar_pose()
             self._publicar_motores(omegas_pub, pwm)
->>>>>>> Stashed changes
             return
         else:
             # ── MODO REAL: Actitud real del Pixhawk + PWM directo ─────────

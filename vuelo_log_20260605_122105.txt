@@ -1,0 +1,19 @@
+# Log de vuelo QAV250 Gemelo Digital
+# Generado: 2026-06-05T12:21:05.913097
+#
+# Columnas:
+#   t      = tiempo relativo al primer mensaje [s]
+#   X      = posicion longitudinal (Pitch) [m]
+#   Y      = posicion lateral (Roll) [m]
+#   Z      = altura [m]
+#   Roll   = angulo de alabeo [grados]
+#   Pitch  = angulo de cabeceo [grados]
+#   Yaw    = angulo de guinada [grados]
+#   w1..w4 = velocidad angular de cada motor [rad/s]
+#   pwm1..4= PWM de cada motor [us]
+#
+         t |        X        Y        Z |     Roll    Pitch      Yaw |      w1      w2      w3      w4 |  pwm1  pwm2  pwm3  pwm4
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+# Fin de sesion — 0 registros grabados.
+# Cerrado: 2026-06-05T12:22:01.688110
