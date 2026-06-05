@@ -1,0 +1,14 @@
+[0.194s] Invoking command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw': AMENT_PREFIX_PATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250:${AMENT_PREFIX_PATH} PYTEST_ADDOPTS=--tb=short --junit-xml=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/pytest.xml --junit-prefix=gemelo_digital_qav250 -o cache_dir=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/.pytest_cache PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -m pytest
+[0.383s] ============================= test session starts ==============================
+[0.383s] platform linux -- Python 3.10.12, pytest-6.2.5, py-1.10.0, pluggy-0.13.0
+[0.386s] cachedir: build/gemelo_digital_qav250/.pytest_cache
+[0.386s] rootdir: /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw
+[0.386s] plugins: launch-testing-ros-0.19.13, ament-copyright-0.12.15, ament-xmllint-0.12.15, ament-flake8-0.12.15, ament-lint-0.12.15, launch-testing-1.0.14, ament-pep257-0.12.15, cov-3.0.0, colcon-core-0.20.1
+[0.501s] collecting ... 
+[0.502s] collected 1 item                                                               
+[0.502s] 
+[0.679s] test/test_nan_protection.py .                                            [100%]
+[0.680s] 
+[0.680s] - generated xml file: /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/pytest.xml -
+[0.680s] ============================== 1 passed in 0.30s ===============================
+[0.743s] Invoked command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw' returned '0': AMENT_PREFIX_PATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250:${AMENT_PREFIX_PATH} PYTEST_ADDOPTS=--tb=short --junit-xml=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/pytest.xml --junit-prefix=gemelo_digital_qav250 -o cache_dir=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/.pytest_cache PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -m pytest

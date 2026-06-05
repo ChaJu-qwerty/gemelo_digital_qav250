@@ -1,0 +1,21 @@
+[0.421s] Invoking command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250': PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/build --no-deps symlink_data
+[0.618s] running develop
+[0.751s] running egg_info
+[0.751s] writing gemelo_digital_qav250.egg-info/PKG-INFO
+[0.751s] writing dependency_links to gemelo_digital_qav250.egg-info/dependency_links.txt
+[0.751s] writing entry points to gemelo_digital_qav250.egg-info/entry_points.txt
+[0.751s] writing requirements to gemelo_digital_qav250.egg-info/requires.txt
+[0.751s] writing top-level names to gemelo_digital_qav250.egg-info/top_level.txt
+[0.753s] reading manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'
+[0.754s] writing manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'
+[0.755s] running build_ext
+[0.755s] Creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages/gemelo-digital-qav250.egg-link (link to .)
+[0.756s] Installing captura_pwm script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+[0.756s] Installing nodo_gemelo_digital script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+[0.756s] Installing registrar_datos script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+[0.756s] Installing rutina_demo script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+[0.756s] Installing ver_pose script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+[0.756s] 
+[0.756s] Installed /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250
+[0.756s] running symlink_data
+[0.782s] Invoked command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250' returned '0': PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/build --no-deps symlink_data

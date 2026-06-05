@@ -99,4 +99,57 @@
     # En su lugar, espera señales PWM en el topic /qav250/pwm_demo
     # que son publicadas por el nodo rutina_demo.
     # Usar true para probar el gemelo digital sin hardware.
+<<<<<<< Updated upstream
     modo_demo: true
+=======
+    modo_demo: false
+
+
+    # MAPEO DE CANALES DEL PIXHAWK A MOTORES DEL MODELO
+    # Este parametro corrige los "movimientos en eje incorrecto" sin tocar el codigo.
+    #
+    # Significado: motor_map: [A, B, C, D]
+    #   A = canal Pixhawk que alimenta M1 del modelo (Frontal Derecho  CCW)
+    #   B = canal Pixhawk que alimenta M2 del modelo (Trasero Izquierdo CCW)
+    #   C = canal Pixhawk que alimenta M3 del modelo (Frontal Izquierdo CW)
+    #   D = canal Pixhawk que alimenta M4 del modelo (Trasero Derecho   CW)
+    #
+    # COMO ENCONTRAR TU MAPEO CORRECTO:
+    # 1. Abrir QGroundControl > Vehicle Setup > Motors
+    # 2. Activar "Test Motor" y probar Motor 1 (canal 1 del Pixhawk)
+    # 3. Ver cual motor fisico del dron gira (ej: el frontal izquierdo)
+    # 4. Ese motor fisico corresponde a M3 en el modelo, entonces C=1
+    # 5. Repetir para canales 2, 3 y 4 y armar el mapa completo
+    #
+    # VALORES TIPICOS PARA QAV250 CON PX4:
+    #   [1, 2, 3, 4] -> PX4 estandar (canal 1=FR, 2=RL, 3=FL, 4=RR)
+    #   [3, 4, 1, 2] -> Si el dron se mueve en Y cuando deberia en X
+    #   [1, 4, 3, 2] -> Si roll y yaw estan invertidos
+    #
+    # Empezar con [1, 2, 3, 4] y ajustar segun la prueba de QGroundControl.
+    motor_map: [1, 2, 3, 4]
+
+
+    # ── GANANCIAS PID DE FALLBACK (actitud) ─────────────────────────
+    # Estos valores se usan INMEDIATAMENTE al arrancar el nodo para que
+    # el gemelo sea estable desde el primer instante.
+    # Si llegan mensajes PARAM_VALUE del Pixhawk via MAVLink, estos
+    # valores se sobreescriben automaticamente en tiempo real.
+    #
+    # Formato PX4: Salida = K * (P * error + I * integral - D * derivada)
+    # Valores tipicos PX4 para QAV250 (pre-autotuning):
+    pid_rollrate_k:  1.0
+    pid_rollrate_p:  0.15
+    pid_rollrate_i:  0.20
+    pid_rollrate_d:  0.003
+
+    pid_pitchrate_k: 1.0
+    pid_pitchrate_p: 0.15
+    pid_pitchrate_i: 0.20
+    pid_pitchrate_d: 0.003
+
+    pid_yawrate_k:   1.0
+    pid_yawrate_p:   0.20
+    pid_yawrate_i:   0.10
+    pid_yawrate_d:   0.0
+>>>>>>> Stashed changes

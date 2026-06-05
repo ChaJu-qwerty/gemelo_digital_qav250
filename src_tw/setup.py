@@ -47,6 +47,7 @@ setup(
             'captura_pwm = gemelo_digital_qav250.captura_pwm:main',
             'rutina_demo = gemelo_digital_qav250.rutina_demo:main',
             'ver_pose = gemelo_digital_qav250.ver_pose:main',
+            'registrar_datos = gemelo_digital_qav250.registrar_datos:main',
         ],
     },
 )

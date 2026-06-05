@@ -1,0 +1,66 @@
+running develop
+running egg_info
+creating gemelo_digital_qav250.egg-info
+writing gemelo_digital_qav250.egg-info/PKG-INFO
+writing dependency_links to gemelo_digital_qav250.egg-info/dependency_links.txt
+writing entry points to gemelo_digital_qav250.egg-info/entry_points.txt
+writing requirements to gemelo_digital_qav250.egg-info/requires.txt
+writing top-level names to gemelo_digital_qav250.egg-info/top_level.txt
+writing manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'
+reading manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'
+writing manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages/gemelo-digital-qav250.egg-link (link to .)
+Installing captura_pwm script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+Installing nodo_gemelo_digital script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+Installing rutina_demo script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+Installing ver_pose script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+
+Installed /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250
+running symlink_data
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/ament_index
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/ament_index/resource_index
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/ament_index/resource_index/packages
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/resource/gemelo_digital_qav250 -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/ament_index/resource_index/packages
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/package.xml -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/launch
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/launch/gemelo_demo.launch.py -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/launch
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/launch/gemelo_digital.launch.py -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/launch
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/config
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/gemelo_digital_qav250/config/qav250_params.yaml -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/config
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/worlds
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/worlds/qav250_twin.world -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/worlds
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/model.config -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/drone_simple.sdf -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/meshes/1345_prop_cw.stl -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/meshes/5010Base.dae -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/meshes/1345_prop_ccw.stl -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/meshes/NXP-HGD-CF.dae -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/meshes/5010Bell.dae -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_demo/meshes/CF.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_demo/meshes
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500.zip -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/model.config -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/model.sdf -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes/1345_prop_cw.stl -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes/5010Base.dae -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes/1345_prop_ccw.stl -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes/NXP-HGD-CF.dae -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes/5010Bell.dae -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes/CF.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/meshes
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials/textures
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials/textures/nxp.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials/textures
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials/textures/rd.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials/textures
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials/textures/CF.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/materials/textures
+creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails/3.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails/2.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails/1.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails/4.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails
+symbolically linking /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails/5.png -> /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/models/drone_gazebo_library_x500/x500/thumbnails

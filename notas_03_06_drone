@@ -1,0 +1,379 @@
+motores "---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+layout:
+  dim:
+  - label: motores
+    size: 8
+    stride: 8
+  data_offset: 0
+data:
+- 399.95489501953125
+- 524.183349609375
+- 621.14208984375
+- 302.9961242675781
+- 1132.0
+- 1173.0
+- 1205.0
+- 1100.0
+---
+bris@bris-BoDE-WXX9:~$ 
+"
+
+pose "       TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      
+==================================================
+  [UNIDADES DE POSICIÓN: METROS (m)]
+    X (Lateral/Roll):     13.256 m
+    Y (Longitud/Pitch):  -27.757 m
+    Z (Altura/Empuje):     0.000 m
+--------------------------------------------------
+  [UNIDADES DE ORIENTACIÓN: GRADOS (°)]
+    Roll  (Alabeo):         9.00°
+    Pitch (Cabeceo):        9.00°
+    Yaw   (Guiñada):       -9.00°
+==================================================
+  * Presiona Ctrl+C en esta terminal para cerrar.
+^Cbris@bris-BoDE-WXX9:~$ 
+"

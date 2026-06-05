@@ -1,0 +1,18 @@
+running develop
+running egg_info
+writing gemelo_digital_qav250.egg-info/PKG-INFO
+writing dependency_links to gemelo_digital_qav250.egg-info/dependency_links.txt
+writing entry points to gemelo_digital_qav250.egg-info/entry_points.txt
+writing requirements to gemelo_digital_qav250.egg-info/requires.txt
+writing top-level names to gemelo_digital_qav250.egg-info/top_level.txt
+reading manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'
+writing manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages/gemelo-digital-qav250.egg-link (link to .)
+Installing captura_pwm script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+Installing nodo_gemelo_digital script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+Installing rutina_demo script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+Installing ver_pose script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250
+
+Installed /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250
+running symlink_data

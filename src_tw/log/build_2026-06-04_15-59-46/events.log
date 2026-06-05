@@ -1,0 +1,54 @@
+[0.000000] (-) TimerEvent: {}
+[0.000134] (gemelo_digital_qav250) JobQueued: {'identifier': 'gemelo_digital_qav250', 'dependencies': OrderedDict()}
+[0.001100] (gemelo_digital_qav250) JobStarted: {'identifier': 'gemelo_digital_qav250'}
+[0.099621] (-) TimerEvent: {}
+[0.199881] (-) TimerEvent: {}
+[0.300214] (-) TimerEvent: {}
+[0.400523] (-) TimerEvent: {}
+[0.500885] (-) TimerEvent: {}
+[0.601123] (-) TimerEvent: {}
+[0.701462] (-) TimerEvent: {}
+[0.801830] (-) TimerEvent: {}
+[0.902071] (-) TimerEvent: {}
+[1.002250] (-) TimerEvent: {}
+[1.102435] (-) TimerEvent: {}
+[1.202617] (-) TimerEvent: {}
+[1.302943] (-) TimerEvent: {}
+[1.403194] (-) TimerEvent: {}
+[1.503542] (-) TimerEvent: {}
+[1.603801] (-) TimerEvent: {}
+[1.704039] (-) TimerEvent: {}
+[1.804294] (-) TimerEvent: {}
+[1.904887] (-) TimerEvent: {}
+[2.005067] (-) TimerEvent: {}
+[2.105221] (-) TimerEvent: {}
+[2.205401] (-) TimerEvent: {}
+[2.302819] (gemelo_digital_qav250) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/build', '--no-deps', 'symlink_data'], 'cwd': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250', 'env': {'GJS_DEBUG_TOPICS': 'JS ERROR;JS LOG', 'VSCODE_CWD': '/home/bris', 'USER': 'bris', 'LC_TIME': 'es_MX.UTF-8', 'VSCODE_NLS_CONFIG': '{"userLocale":"en-us","osLocale":"en-us","resolvedLanguage":"en","defaultMessagesFile":"/usr/share/antigravity/resources/app/out/nls.messages.json","locale":"en-us","availableLanguages":{}}', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '0', 'HOME': '/home/bris', 'CHROME_DESKTOP': 'antigravity.desktop', 'DESKTOP_SESSION': 'ubuntu', 'VSCODE_IPC_HOOK': '/run/user/1000/vscode-b428d1a3-1.10-main.sock', 'GIO_LAUNCHED_DESKTOP_FILE': '/usr/share/applications/antigravity.desktop', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'PAGER': 'cat', 'LC_MONETARY': 'es_MX.UTF-8', 'MANAGERPID': '1023', 'SYSTEMD_EXEC_PID': '1300', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'ANTIGRAVITY_AGENT': '1', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '8880', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'LOGNAME': 'bris', '_': '/usr/bin/colcon', 'JOURNAL_STREAM': '8:10155', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'bris', 'TERM': 'dumb', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'FC_FONTATIONS': '1', 'ANTIGRAVITY_EDITOR_APP_ROOT': '/usr/share/antigravity/resources/app', 'PATH': '/home/bris/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/bris-BoDE-WXX9:@/tmp/.ICE-unix/1268,unix/bris-BoDE-WXX9:/tmp/.ICE-unix/1268', 'INVOCATION_ID': '69b1eddf34b84db5b811eb3c8c0fcbe1', 'XDG_MENU_PREFIX': 'gnome-', 'LC_ADDRESS': 'es_MX.UTF-8', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'GDK_BACKEND': 'wayland', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'LC_TELEPHONE': 'es_MX.UTF-8', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.WEVUQ3', 'SSH_AGENT_LAUNCHER': 'gnome-keyring', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'SHELL': '/bin/bash', 'LC_NAME': 'es_MX.UTF-8', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LC_MEASUREMENT': 'es_MX.UTF-8', 'GJS_DEBUG_OUTPUT': 'stderr', 'LC_IDENTIFICATION': 'es_MX.UTF-8', 'QT_IM_MODULE': 'ibus', 'ANTIGRAVITY_TRAJECTORY_ID': '8ce945fa-1b69-4b08-b1a5-c0243d5acfc7', 'PWD': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'VSCODE_CODE_CACHE_PATH': '/home/bris/.config/Antigravity/CachedData/15487b3041e65228cae24980a3f796c905ef582c', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'LC_NUMERIC': 'es_MX.UTF-8', 'LC_PAPER': 'es_MX.UTF-8', 'COLCON': '1', 'VSCODE_PID': '8880', 'PYTHONPATH': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:'}, 'shell': False}
+[2.305472] (-) TimerEvent: {}
+[2.405644] (-) TimerEvent: {}
+[2.505836] (-) TimerEvent: {}
+[2.522322] (gemelo_digital_qav250) StdoutLine: {'line': b'running develop\n'}
+[2.594911] (gemelo_digital_qav250) StdoutLine: {'line': b'running egg_info\n'}
+[2.595031] (gemelo_digital_qav250) StdoutLine: {'line': b'writing gemelo_digital_qav250.egg-info/PKG-INFO\n'}
+[2.595131] (gemelo_digital_qav250) StdoutLine: {'line': b'writing dependency_links to gemelo_digital_qav250.egg-info/dependency_links.txt\n'}
+[2.605701] (gemelo_digital_qav250) StdoutLine: {'line': b'writing entry points to gemelo_digital_qav250.egg-info/entry_points.txt\n'}
+[2.605854] (-) TimerEvent: {}
+[2.605867] (gemelo_digital_qav250) StdoutLine: {'line': b'writing requirements to gemelo_digital_qav250.egg-info/requires.txt\n'}
+[2.605986] (gemelo_digital_qav250) StdoutLine: {'line': b'writing top-level names to gemelo_digital_qav250.egg-info/top_level.txt\n'}
+[2.607793] (gemelo_digital_qav250) StdoutLine: {'line': b"reading manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'\n"}
+[2.619218] (gemelo_digital_qav250) StdoutLine: {'line': b"writing manifest file 'gemelo_digital_qav250.egg-info/SOURCES.txt'\n"}
+[2.620200] (gemelo_digital_qav250) StdoutLine: {'line': b'running build_ext\n'}
+[2.620360] (gemelo_digital_qav250) StdoutLine: {'line': b'Creating /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages/gemelo-digital-qav250.egg-link (link to .)\n'}
+[2.630244] (gemelo_digital_qav250) StdoutLine: {'line': b'Installing captura_pwm script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250\n'}
+[2.630342] (gemelo_digital_qav250) StdoutLine: {'line': b'Installing nodo_gemelo_digital script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250\n'}
+[2.630410] (gemelo_digital_qav250) StdoutLine: {'line': b'Installing registrar_datos script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250\n'}
+[2.630476] (gemelo_digital_qav250) StdoutLine: {'line': b'Installing rutina_demo script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250\n'}
+[2.630538] (gemelo_digital_qav250) StdoutLine: {'line': b'Installing ver_pose script to /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/gemelo_digital_qav250\n'}
+[2.630701] (gemelo_digital_qav250) StdoutLine: {'line': b'\n'}
+[2.630737] (gemelo_digital_qav250) StdoutLine: {'line': b'Installed /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250\n'}
+[2.630804] (gemelo_digital_qav250) StdoutLine: {'line': b'running symlink_data\n'}
+[2.670753] (gemelo_digital_qav250) CommandEnded: {'returncode': 0}
+[2.705943] (-) TimerEvent: {}
+[2.806139] (-) TimerEvent: {}
+[2.858228] (gemelo_digital_qav250) JobEnded: {'identifier': 'gemelo_digital_qav250', 'rc': 0}
+[2.859400] (-) EventReactorShutdown: {}

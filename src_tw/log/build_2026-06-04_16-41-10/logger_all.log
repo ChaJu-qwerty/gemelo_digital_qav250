@@ -1,0 +1,94 @@
+[0.753s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--packages-select', 'gemelo_digital_qav250', '--symlink-install']
+[0.754s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=['gemelo_digital_qav250'], packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x77f4a9b52f80>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x77f4a9b144c0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x77f4a9b144c0>>, mixin_verb=('build',))
+[14.067s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[14.067s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[14.067s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[14.067s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[14.067s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[14.067s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[14.067s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw'
+[14.067s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[14.067s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[14.067s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[14.068s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[14.068s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[14.068s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[14.068s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[14.068s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[14.068s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[14.111s] DEBUG:colcon.colcon_core.package_identification:Package '.' with type 'ros.ament_python' and name 'gemelo_digital_qav250'
+[14.111s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[14.111s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[14.111s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[14.111s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[14.111s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[14.475s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[14.475s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[14.571s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 1 installed packages in /home/bris/ros2_ws/install
+[14.572s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 288 installed packages in /opt/ros/humble
+[14.573s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'cmake_args' from command line to 'None'
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'cmake_target' from command line to 'None'
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'cmake_clean_cache' from command line to 'False'
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'cmake_clean_first' from command line to 'False'
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'cmake_force_configure' from command line to 'False'
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'ament_cmake_args' from command line to 'None'
+[14.898s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'catkin_cmake_args' from command line to 'None'
+[14.899s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' build argument 'catkin_skip_building_tests' from command line to 'False'
+[14.899s] DEBUG:colcon.colcon_core.verb:Building package 'gemelo_digital_qav250' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250', 'merge_install': False, 'path': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw', 'symlink_install': True, 'test_result_base': None}
+[14.899s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[14.900s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[14.900s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw' with build type 'ament_python'
+[14.900s] Level 1:colcon.colcon_core.shell:create_environment_hook('gemelo_digital_qav250', 'ament_prefix_path')
+[14.951s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[14.951s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/ament_prefix_path.ps1'
+[14.974s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/ament_prefix_path.dsv'
+[14.991s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/ament_prefix_path.sh'
+[14.992s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[14.992s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[15.332s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw'
+[15.332s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[15.332s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[17.888s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250': PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/build --no-deps symlink_data
+[18.398s] Level 1:colcon.colcon_core.shell:create_environment_hook('gemelo_digital_qav250', 'pythonpath_develop')
+[18.398s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/pythonpath_develop.ps1'
+[18.398s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250' returned '0': PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/build --no-deps symlink_data
+[18.399s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/pythonpath_develop.dsv'
+[18.409s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/pythonpath_develop.sh'
+[18.586s] Level 1:colcon.colcon_core.environment:checking '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250' for CMake module files
+[18.586s] Level 1:colcon.colcon_core.environment:checking '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250' for CMake config files
+[18.587s] Level 1:colcon.colcon_core.environment:checking '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib'
+[18.587s] Level 1:colcon.colcon_core.environment:checking '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/bin'
+[18.587s] Level 1:colcon.colcon_core.environment:checking '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/pkgconfig/gemelo_digital_qav250.pc'
+[18.587s] Level 1:colcon.colcon_core.environment:checking '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages'
+[18.587s] Level 1:colcon.colcon_core.shell:create_environment_hook('gemelo_digital_qav250', 'pythonpath')
+[18.587s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/pythonpath.ps1'
+[18.588s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/pythonpath.dsv'
+[18.598s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/hook/pythonpath.sh'
+[18.599s] Level 1:colcon.colcon_core.environment:checking '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/bin'
+[18.599s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(gemelo_digital_qav250)
+[18.599s] INFO:colcon.colcon_core.shell:Creating package script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/package.ps1'
+[18.608s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/package.dsv'
+[18.638s] INFO:colcon.colcon_core.shell:Creating package script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/package.sh'
+[18.651s] INFO:colcon.colcon_core.shell:Creating package script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/package.bash'
+[18.673s] INFO:colcon.colcon_core.shell:Creating package script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/gemelo_digital_qav250/package.zsh'
+[18.686s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/share/colcon-core/packages/gemelo_digital_qav250)
+[18.697s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[18.698s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[18.698s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[18.698s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[18.815s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[18.815s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[18.816s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[18.837s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[18.838s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/local_setup.ps1'
+[18.875s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/_local_setup_util_ps1.py'
+[18.894s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/setup.ps1'
+[18.907s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/local_setup.sh'
+[18.920s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/_local_setup_util_sh.py'
+[18.931s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/setup.sh'
+[18.934s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/local_setup.bash'
+[18.972s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/setup.bash'
+[18.985s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/local_setup.zsh'
+[19.033s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/setup.zsh'

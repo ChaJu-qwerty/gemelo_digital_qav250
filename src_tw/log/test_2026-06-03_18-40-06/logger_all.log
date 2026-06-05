@@ -1,0 +1,51 @@
+[0.122s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'test', '--packages-select', 'gemelo_digital_qav250', '--event-handlers', 'console_cohesion+']
+[0.122s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='test', build_base='build', install_base='install', merge_install=False, test_result_base=None, retest_until_fail=0, retest_until_pass=0, abort_on_error=False, return_code_on_test_failure=False, executor='parallel', parallel_workers=8, event_handlers=['console_cohesion+'], ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=['gemelo_digital_qav250'], packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], ctest_args=None, python_testing=None, pytest_args=None, pytest_with_coverage=False, unittest_args=None, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x7762f0ba40a0>, verb_extension=<colcon_core.verb.test.TestVerb object at 0x7762f0b24610>, main=<bound method TestVerb.main of <colcon_core.verb.test.TestVerb object at 0x7762f0b24610>>, mixin_verb=('test',))
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.244s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw'
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.244s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.254s] DEBUG:colcon.colcon_core.package_identification:Package '.' with type 'ros.ament_python' and name 'gemelo_digital_qav250'
+[0.254s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.254s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.254s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.254s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.254s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.256s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' test argument 'ctest_args' from command line to 'None'
+[0.256s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' test argument 'python_testing' from command line to 'None'
+[0.256s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' test argument 'pytest_args' from command line to 'None'
+[0.256s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' test argument 'pytest_with_coverage' from command line to 'False'
+[0.256s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' test argument 'unittest_args' from command line to 'None'
+[0.256s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' test argument 'retest_until_pass' from command line to '0'
+[0.256s] Level 5:colcon.colcon_core.verb:set package 'gemelo_digital_qav250' test argument 'retest_until_fail' from command line to '0'
+[0.256s] DEBUG:colcon.colcon_core.verb.test:Testing package 'gemelo_digital_qav250' with the following arguments: {'build_base': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250', 'ctest_args': None, 'install_base': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250', 'path': '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw', 'pytest_args': None, 'pytest_with_coverage': False, 'python_testing': None, 'retest_until_fail': 0, 'retest_until_pass': 0, 'test_result_base': None, 'unittest_args': None}
+[0.256s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.257s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.257s] INFO:colcon.colcon_ros.task.ament_python.test:Testing ROS package in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw' with build type'ament_python'
+[0.257s] INFO:colcon.colcon_core.task.python.test:Testing Python package in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw'
+[0.258s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.258s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.258s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.437s] Level 1:colcon.colcon_core.task.python.test:test() by extension 'pytest'
+[0.437s] Level 1:colcon.colcon_core.task.python.test:test.step() by extension 'pytest'
+[0.439s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw': AMENT_PREFIX_PATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250:${AMENT_PREFIX_PATH} PYTEST_ADDOPTS=--tb=short --junit-xml=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/pytest.xml --junit-prefix=gemelo_digital_qav250 -o cache_dir=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/.pytest_cache PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -m pytest
+[0.926s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw' returned '2': AMENT_PREFIX_PATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250:${AMENT_PREFIX_PATH} PYTEST_ADDOPTS=--tb=short --junit-xml=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/pytest.xml --junit-prefix=gemelo_digital_qav250 -o cache_dir=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250/.pytest_cache PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/build/gemelo_digital_qav250:/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/install/gemelo_digital_qav250/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -m pytest
+[0.936s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[0.936s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[0.936s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '2'
+[0.936s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[0.940s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[0.940s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[0.940s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[0.948s] DEBUG:colcon.colcon_core.event_reactor:joined thread
