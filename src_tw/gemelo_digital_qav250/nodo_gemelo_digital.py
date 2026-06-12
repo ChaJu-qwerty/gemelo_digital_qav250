@@ -8,9 +8,9 @@ import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 # pyrefly: ignore [missing-import]
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Vector3
 # pyrefly: ignore [missing-import]
-from std_msgs.msg import Float32MultiArray, MultiArrayDimension, Bool
+from std_msgs.msg import Float32MultiArray, MultiArrayDimension, Bool, Float32
 
 try:
     from tf_transformations import quaternion_from_euler
@@ -89,6 +89,7 @@ class NodoGemeloDigital(Node):
             "Az" : params["Az"],
         }
         self.modelo = DroneModel(parametros_modelo)
+        self.modelo_puro = DroneModel(parametros_modelo)
         self.get_logger().info("Modelo Euler-Lagrange inicializado.")
 
         # ── Publishers ────────────────────────────────────────────────────────
@@ -97,11 +98,15 @@ class NodoGemeloDigital(Node):
             params["topic_pose"],
             10,
         )
+        self.pub_euler_calc = self.create_publisher(Vector3, "/qav250/euler_calculado", 10)
         self.pub_motores = self.create_publisher(
             Float32MultiArray,
             params["topic_motores"],
             10,
         )
+        # Publishers para retransmitir datos al nodo fantasma
+        self.pub_pwm = self.create_publisher(Float32MultiArray, '/qav250/pwm_raw', 10)
+        self.pub_bat = self.create_publisher(Float32, '/qav250/battery_voltage', 10)
         self.get_logger().info(f"Publicando pose en:    {params['topic_pose']}")
         self.get_logger().info(f"Publicando motores en: {params['topic_motores']}")
 
@@ -133,6 +138,8 @@ class NodoGemeloDigital(Node):
         self.actitud_real = None       # (roll, pitch, yaw) en rad
         self.tasa_angular_real = None  # (p, q, r) en rad/s
         self.yaw_real_offset = None    # Para normalizar yaw inicial a 0
+        self.roll_real_offset = None   # Para restar inclinación de reposo del IMU
+        self.pitch_real_offset = None  # Para restar inclinación de reposo del IMU
 
         # Controlador PID de actitud virtual (solo para MODO DEMO)
         pid_fallback = {
@@ -142,7 +149,7 @@ class NodoGemeloDigital(Node):
             "rollrate_d":  params.get("pid_rollrate_d",  0.003),
             "pitchrate_k": params.get("pid_pitchrate_k", 1.0),
             "pitchrate_p": params.get("pid_pitchrate_p", 0.15),
-            "pitchrate_i": params.get("pid_pitchrate_i",  0.20),
+            "pitchrate_i": params.get("pid_pitchxrate_i",  0.20),
             "pitchrate_d": params.get("pid_pitchrate_d", 0.003),
             "yawrate_k":   params.get("pid_yawrate_k",   1.0),
             "yawrate_p":   params.get("pid_yawrate_p",   0.20),
@@ -254,6 +261,8 @@ class NodoGemeloDigital(Node):
         self.declare_parameter("esc_eficiencia",     0.85)
         self.declare_parameter("modo_demo",          False)
         self.declare_parameter("motor_map",          [1, 2, 3, 4])
+        self.declare_parameter("multiplicador_imu",  1.0)
+        self.declare_parameter("bloquear_xy",        False)
         # PID fallback gains
         self.declare_parameter("pid_rollrate_k",     1.0)
         self.declare_parameter("pid_rollrate_p",     0.15)
@@ -294,6 +303,8 @@ class NodoGemeloDigital(Node):
             "esc_eficiencia"    : self.get_parameter("esc_eficiencia").value,
             "modo_demo"         : self.get_parameter("modo_demo").value,
             "motor_map"         : self.get_parameter("motor_map").value,
+            "multiplicador_imu" : self.get_parameter("multiplicador_imu").value,
+            "bloquear_xy"       : self.get_parameter("bloquear_xy").value,
             # PID fallback gains
             "pid_rollrate_k"    : self.get_parameter("pid_rollrate_k").value,
             "pid_rollrate_p"    : self.get_parameter("pid_rollrate_p").value,
@@ -359,11 +370,16 @@ class NodoGemeloDigital(Node):
             # Bucle de lectura continua
             while rclpy.ok():
                 msg = self.conexion_mav.recv_match(
-                    type    = ["SERVO_OUTPUT_RAW", "ATTITUDE", "ATTITUDE_TARGET", "PARAM_VALUE"],
+                    type    = ["SERVO_OUTPUT_RAW", "ATTITUDE", "ATTITUDE_TARGET", "PARAM_VALUE", "SYS_STATUS"],
                     blocking= True,
                     timeout = 1.0,
                 )
                 if msg is None:
+                    # FAILSAFE: Si perdemos conexión con Pixhawk por >1 seg, 
+                    # cortamos motores para evitar un "flyaway" al infinito.
+                    with self._lock:
+                        self.pwm_actual = [1000.0] * 4
+                        self.actitud_real = (0.0, 0.0, self.yaw_real_offset if self.yaw_real_offset else 0.0)
                     continue
                 tipo = msg.get_type()
                 if tipo == "SERVO_OUTPUT_RAW":
@@ -371,25 +387,54 @@ class NodoGemeloDigital(Node):
                         for i, canal in enumerate(CANALES_MOTOR):
                             attr = f"servo{canal}_raw"
                             self.pwm_actual[i] = float(getattr(msg, attr, 1000) or 1000)
+                        
+                        # Publicar PWM para el nodo fantasma
+                        msg_pwm = Float32MultiArray()
+                        msg_pwm.data = self.pwm_actual
+                        self.pub_pwm.publish(msg_pwm)
 
                 elif tipo == "ATTITUDE":
-                    # ── ACTITUD REAL del IMU del Pixhawk ──────────────────
-                    # Estos son los ángulos MEDIDOS, no setpoints.
-                    # Los usamos directamente para la dirección de empuje.
+                    # ── ACTITUD REAL del IMU del Pixhawk (NED -> ENU) ─────
+                    # Pixhawk manda ángulos en formato NED (North-East-Down):
+                    #   Pitch+: Nariz ARRIBA
+                    #   Yaw+:   Giro DERECHA
+                    # Pero nuestro modelo Euler-Lagrange y Gazebo son ENU (East-North-Up):
+                    #   Pitch+: Nariz ABAJO
+                    #   Yaw 0:  Apunta al ESTE (+X)
+                    # Por lo tanto, debemos transformar de NED a ENU:
                     roll_real  = float(msg.roll)
-                    pitch_real = float(msg.pitch)
-                    yaw_raw    = float(msg.yaw)
+                    pitch_real = -float(msg.pitch)
+                    yaw_raw    = (math.pi / 2.0) - float(msg.yaw)
 
                     with self._lock:
-                        # Offset de yaw para que el gemelo empiece en 0
+                        # Capturar offsets iniciales cuando el dron está en reposo.
+                        # Los tres ángulos se deben restar:
+                        #   - Yaw:   Orientación magnética, irrelevante en el simulador.
+                        #   - Roll:  Si el dron está en una mesa inclinada, el IMU reporta
+                        #            Roll≠0 pero el dron no se mueve. Sin restar esto,
+                        #            el simulador genera fuerza lateral constante.
+                        #   - Pitch: Mismo caso que Roll.
+                        # Estos offsets se capturan ANTES de armar, cuando los motores
+                        # están apagados (PWM=1000) y el dron está quieto en el suelo.
                         if self.yaw_real_offset is None:
                             self.yaw_real_offset = yaw_raw
+                            self.roll_real_offset = roll_real
+                            self.pitch_real_offset = pitch_real
+                            self.get_logger().info(
+                                f"Offsets de reposo capturados: "
+                                f"Roll={math.degrees(roll_real):.1f}° "
+                                f"Pitch={math.degrees(pitch_real):.1f}° "
+                                f"Yaw={math.degrees(yaw_raw):.1f}°"
+                            )
 
-                        yaw_rel = yaw_raw - self.yaw_real_offset
+                        # Restar offsets para que la orientación de reposo sea (0,0,0)
+                        roll_cal  = roll_real - self.roll_real_offset
+                        pitch_cal = pitch_real - self.pitch_real_offset
+                        yaw_rel   = yaw_raw - self.yaw_real_offset
                         while yaw_rel > math.pi: yaw_rel -= 2.0 * math.pi
                         while yaw_rel < -math.pi: yaw_rel += 2.0 * math.pi
 
-                        self.actitud_real = (roll_real, pitch_real, yaw_rel)
+                        self.actitud_real = (roll_cal, pitch_cal, yaw_rel)
                         self.tasa_angular_real = (
                             float(msg.rollspeed),
                             float(msg.pitchspeed),
@@ -419,6 +464,22 @@ class NodoGemeloDigital(Node):
                             f"[AUTOTUNE] Ganancia actualizada: {nombre} = {valor:.6f}"
                         )
 
+                elif tipo == "SYS_STATUS":
+                    # Extraer voltaje de la batería en mV y pasarlo a V
+                    voltaje = float(msg.voltage_battery) / 1000.0
+                    # Ignorar si da 0 o un valor basura (ej. desconectado)
+                    if voltaje > 5.0:
+                        with self._lock:
+                            motor_kv = self.params.get("motor_kv", 2300.0)
+                            esc_eficiencia = self.params.get("esc_eficiencia", 0.85)
+                            rpm_max = motor_kv * voltaje * esc_eficiencia
+                            self.omega_max = rpm_max * (2.0 * math.pi / 60.0)
+                        
+                        # Publicar voltaje para el nodo fantasma
+                        msg_bat = Float32()
+                        msg_bat.data = voltaje
+                        self.pub_bat.publish(msg_bat)
+
         except Exception as e:
             self.get_logger().error(f"Error en hilo MAVLink: {e}")
 
@@ -437,7 +498,13 @@ class NodoGemeloDigital(Node):
                 mavutil.mavlink.MAV_DATA_STREAM_EXTRA1,
                 20, 1,
             )
-            self.get_logger().info("Streams SERVO_OUTPUT_RAW y ATTITUDE_TARGET solicitados a 20 Hz.")
+            self.conexion_mav.mav.request_data_stream_send(
+                self.conexion_mav.target_system,
+                self.conexion_mav.target_component,
+                mavutil.mavlink.MAV_DATA_STREAM_EXTENDED_STATUS,
+                2, 1, # 2 Hz es suficiente para batería
+            )
+            self.get_logger().info("Streams SERVO_OUTPUT_RAW, ATTITUDE y SYS_STATUS solicitados.")
             
             # Solicitar ganancias PID al iniciar
             self._solicitar_parametros_pid()
@@ -551,12 +618,17 @@ class NodoGemeloDigital(Node):
                 omega2 = omegas[self.motor_map[1]]
                 omega3 = omegas[self.motor_map[2]]
                 omega4 = omegas[self.motor_map[3]]
+                o1 = omegas[self.motor_map[0]]
+                o2 = omegas[self.motor_map[1]]
+                o3 = omegas[self.motor_map[2]]
+                o4 = omegas[self.motor_map[3]]
             except IndexError:
                 omega1, omega2, omega3, omega4 = omegas
+                o1, o2, o3, o4 = omega1, omega2, omega3, omega4
 
             # Usar modelo RK4 completo (rotacional + translacional)
             try:
-                self.estado = self.modelo.actualizar(omega1, omega2, omega3, omega4, dt)
+                self.estado = self.modelo.actualizar(o1, o2, o3, o4, dt)
             except Exception as e:
                 self.get_logger().warn(f"Error en modelo: {e}")
                 return
@@ -605,6 +677,17 @@ class NodoGemeloDigital(Node):
             except IndexError:
                 omega1, omega2, omega3, omega4 = omegas_raw
 
+            # -- INTEGRACIÓN PURA ABIERTA (Solo para telemetría/comparación matemática) --
+            try:
+                self.modelo_puro.actualizar(omega1, omega2, omega3, omega4, dt)
+                vec_msg = Vector3()
+                vec_msg.x = float(math.degrees(self.modelo_puro.estado[3]))
+                vec_msg.y = float(math.degrees(self.modelo_puro.estado[4]))
+                vec_msg.z = float(math.degrees(self.modelo_puro.estado[5]))
+                self.pub_euler_calc.publish(vec_msg)
+            except Exception as e:
+                pass
+
             # 2. Empuje total T = k * Σ(ωi²)
             T = self.modelo.k * (omega1**2 + omega2**2 + omega3**2 + omega4**2)
 
@@ -616,27 +699,36 @@ class NodoGemeloDigital(Node):
             # 4. Si aún no llega ATTITUDE, usar ángulos = 0 (horizontal)
             if actitud is not None:
                 phi, theta, psi = actitud
+                
+                # APLICAR MULTIPLICADOR DE IMU
+                mult = self.get_parameter("multiplicador_imu").value
+                phi *= mult
+                theta *= mult
+                
+                # CLAMP DE SEGURIDAD: Nunca permitir inclinaciones > 85° (1.48 rad)
+                # Evita que un multiplicador alto o un pico del IMU invierta el empuje
+                phi = float(np.clip(phi, -1.48, 1.48))
+                theta = float(np.clip(theta, -1.48, 1.48))
+                
+                # El Yaw (psi) ya viene con el offset restado desde el hilo MAVLink (self.actitud_real).
+                # Ya no necesitamos restarlo de nuevo aquí.
             else:
                 phi, theta, psi = 0.0, 0.0, 0.0
 
-            # 5. Bloqueo en suelo: si empuje < peso y Z <= 0
-            peso = self.modelo.m * self.modelo.g
-            if T <= peso and float(self.estado[2]) <= 0.0:
-                self.estado = np.zeros(12)
-                self.estado[3] = phi
-                self.estado[4] = theta
-                self.estado[5] = psi
-                self._publicar_pose()
-                self._publicar_motores([omega1, omega2, omega3, omega4], pwm)
-                return
+            # 5. [ELIMINADO] Bloqueo en suelo: Ya no reseteamos el estado a 0 si toca el piso, 
+            # porque eso causaba el "temblor" o stuttering si el dron volaba muy bajo y rozaba Z=0.
+            # La colisión con el suelo se maneja suavemente al final del bucle.
 
             # 6. Dirección de empuje en frame inercial (Luukkonen ec. 21)
+            # FIX: Para pruebas en el stand (donde el magnetómetro puede driftear 180° en interiores),
+            # forzamos psi=0 en la matriz de traslación. Esto asegura que Pitch SIEMPRE mueva en X
+            # y Roll SIEMPRE mueva en Y en la pantalla, ignorando si el dron virtual cree estar mirando al sur.
             sphi, cphi = np.sin(phi), np.cos(phi)
             stht, ctht = np.sin(theta), np.cos(theta)
-            spsi, cpsi = np.sin(psi), np.cos(psi)
-
-            thrust_dir_x = (cpsi * stht * cphi) + (spsi * sphi)
-            thrust_dir_y = (spsi * stht * cphi) - (cpsi * sphi)
+            
+            # Matriz con psi=0 (cpsi=1, spsi=0)
+            thrust_dir_x = (1.0 * stht * cphi) + (0.0 * sphi)
+            thrust_dir_y = (0.0 * stht * cphi) - (1.0 * sphi)
             thrust_dir_z = ctht * cphi
 
             # 7. Velocidades actuales del estado
@@ -644,25 +736,37 @@ class NodoGemeloDigital(Node):
             dy = float(self.estado[7])
             dz = float(self.estado[8])
 
-            # 8. Aceleraciones translacionales (Luukkonen ec. 21)
+            # 8. Aceleraciones base sin arrastre (fuerzas propulsivas)
             m = self.modelo.m
-            ddx = (T / m) * thrust_dir_x - (self.modelo.Ax / m) * dx
-            ddy = (T / m) * thrust_dir_y - (self.modelo.Ay / m) * dy
-            ddz = (T / m) * thrust_dir_z - (self.modelo.Az / m) * dz - self.modelo.g
+            accel_x = (T / m) * thrust_dir_x
+            accel_y = (T / m) * thrust_dir_y
+            accel_z = (T / m) * thrust_dir_z - self.modelo.g
 
-            # 9. Integración semi-implícita (Symplectic Euler)
-            dx_new = dx + ddx * dt
-            dy_new = dy + ddy * dt
-            dz_new = dz + ddz * dt
+            # 9. Integración Implícita del Arrastre (Estabilidad incondicional)
+            # v_new = (v_old + a * dt) / (1 + (drag/m) * dt)
+            dx_new = (dx + accel_x * dt) / (1.0 + (self.modelo.Ax / m) * dt)
+            dy_new = (dy + accel_y * dt) / (1.0 + (self.modelo.Ay / m) * dt)
+            dz_new = (dz + accel_z * dt) / (1.0 + (self.modelo.Az / m) * dt)
 
+            # Integración de posición (Symplectic Euler)
             x_new = float(self.estado[0]) + dx_new * dt
             y_new = float(self.estado[1]) + dy_new * dt
             z_new = float(self.estado[2]) + dz_new * dt
 
-            # Clamp Z >= 0 (suelo)
-            if z_new < 0.0:
+            # Clamp Z >= 0 (suelo) y Fricción Estática
+            if z_new <= 0.0:
                 z_new = 0.0
                 dz_new = max(0.0, dz_new)
+                dx_new = 0.0
+                dy_new = 0.0
+
+            # ── MODO STAND DE PRUEBAS ──
+            # Si está activado, bloquea por completo el movimiento lateral.
+            if self.params.get("bloquear_xy", False):
+                x_new = 0.0
+                y_new = 0.0
+                dx_new = 0.0
+                dy_new = 0.0
 
             # 10. Actualizar vector de estado [x,y,z, phi,theta,psi, dx,dy,dz, p,q,r]
             self.estado[0] = x_new

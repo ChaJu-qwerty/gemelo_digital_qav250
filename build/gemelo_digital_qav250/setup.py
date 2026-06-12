@@ -1,1 +1,0 @@
-/home/bris/Desktop/reto/gemelo_digital_qav250/src_tw/setup.py

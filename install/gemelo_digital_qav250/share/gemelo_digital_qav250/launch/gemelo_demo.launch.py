@@ -1,1 +1,0 @@
-/home/bris/Desktop/reto/gemelo_digital_qav250/build/gemelo_digital_qav250/launch/gemelo_demo.launch.py

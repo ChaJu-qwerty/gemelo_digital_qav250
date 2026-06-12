@@ -44,10 +44,14 @@ setup(
     entry_points={
         'console_scripts': [
             'nodo_gemelo_digital = gemelo_digital_qav250.nodo_gemelo_digital:main',
+            'nodo_gemelo_fantasma = gemelo_digital_qav250.nodo_gemelo_fantasma:main',
+            'nodo_lector_gyro = gemelo_digital_qav250.nodo_lector_gyro:main',
             'captura_pwm = gemelo_digital_qav250.captura_pwm:main',
             'rutina_demo = gemelo_digital_qav250.rutina_demo:main',
+            'rutina_cuadrado = gemelo_digital_qav250.rutina_cuadrado:main',
             'ver_pose = gemelo_digital_qav250.ver_pose:main',
             'registrar_datos = gemelo_digital_qav250.registrar_datos:main',
+            'registrar_comparativa = gemelo_digital_qav250.registrar_comparativa:main',
         ],
     },
 )

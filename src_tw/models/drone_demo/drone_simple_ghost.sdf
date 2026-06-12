@@ -1,0 +1,162 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="drone_fantasma">
+    <!-- Estático: la posición se controla cinemáticamente por el gemelo digital -->
+    <static>true</static>
+    <pose>0 0 0.24 0 0 0</pose>
+    <link name="base_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- ── Chasis principal (mesh x500) ── -->
+      <visual name="base_link_visual">
+        <pose>0 0 .025 0 0 3.141592654</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/NXP-HGD-CF.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>1 0 0 0.7</ambient>
+          <diffuse>1 0 0 0.7</diffuse>
+        </material>
+      </visual>
+
+      <!-- ── Motor bases ── -->
+      <visual name="5010_motor_base_0">
+        <pose>0.174 0.174 .032 0 0 -.45</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Base.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="5010_motor_base_1">
+        <pose>-0.174 0.174 .032 0 0 -.45</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Base.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="5010_motor_base_2">
+        <pose>0.174 -0.174 .032 0 0 -.45</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Base.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="5010_motor_base_3">
+        <pose>-0.174 -0.174 .032 0 0 -.45</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Base.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <!-- ── Rotores / Hélices ── -->
+      <!-- Rotor 0 (Frontal Derecho) CCW -->
+      <visual name="rotor_0_visual">
+        <pose>0.152 -0.3204 0.044 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.846 0.846 0.846</scale>
+            <uri>model://drone_demo/meshes/1345_prop_ccw.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.2 0.2 0.2 1</diffuse>
+        </material>
+      </visual>
+      <visual name="rotor_0_bell">
+        <pose>0.174 -0.174 0.028 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Bell.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <!-- Rotor 1 (Trasero Izquierdo) CCW -->
+      <visual name="rotor_1_visual">
+        <pose>-0.196 0.0276 0.044 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.846 0.846 0.846</scale>
+            <uri>model://drone_demo/meshes/1345_prop_ccw.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.2 0.2 0.2 1</diffuse>
+        </material>
+      </visual>
+      <visual name="rotor_1_bell">
+        <pose>-0.174 0.174 0.028 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Bell.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <!-- Rotor 2 (Frontal Izquierdo) CW -->
+      <visual name="rotor_2_visual">
+        <pose>0.152 0.0276 0.044 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.846 0.846 0.846</scale>
+            <uri>model://drone_demo/meshes/1345_prop_cw.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.2 0.2 0.2 1</diffuse>
+        </material>
+      </visual>
+      <visual name="rotor_2_bell">
+        <pose>0.174 0.174 0.028 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Bell.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <!-- Rotor 3 (Trasero Derecho) CW -->
+      <visual name="rotor_3_visual">
+        <pose>-0.196 -0.3204 0.044 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.846 0.846 0.846</scale>
+            <uri>model://drone_demo/meshes/1345_prop_cw.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.2 0.2 0.2 1</diffuse>
+        </material>
+      </visual>
+      <visual name="rotor_3_bell">
+        <pose>-0.174 -0.174 0.028 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drone_demo/meshes/5010Bell.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+    </link>
+  </model>
+</sdf>

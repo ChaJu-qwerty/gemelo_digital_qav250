@@ -1,0 +1,22 @@
+# Compilación y ROS 2
+build/
+install/
+log/
+*.log
+*.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDEs
+.vscode/
+.idea/
+
+# Archivos de SO
+.DS_Store
+*.swp
+
+# Experimentos descartados
+*cuadrado*

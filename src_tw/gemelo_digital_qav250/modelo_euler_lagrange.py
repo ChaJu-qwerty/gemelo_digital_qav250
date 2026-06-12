@@ -25,7 +25,6 @@ class DroneModel:
         self.Ax = parameters["Ax"] # arrastre aerodinamico en x [kg/s] {calcularlo de alguna manera o ponerle 0}
         self.Ay = parameters["Ay"] # arrastre aerodinamico en y [kg/s] {calcularlo de alguna manera o ponerle 0}
         self.Az = parameters["Az"] # arrastre aerodinamico en z [kg/s] {calcularlo de alguna manera o ponerle 0}
-
         self.g = 9.81 # gravedad [m/s^2]
 
         self.estado = np.zeros(12)
