@@ -12,23 +12,20 @@
 
     # ── Momentos de inercia [kg·m²] ──────────────────────────────
     # ¡CRÍTICO PARA LA VALIDACIÓN!
-    # CORRECCIÓN DE INERCIAS (SolidWorks vs ROS 2):
-    # 1. Se deben usar los valores del Centro de Masa (Lxx, Lyy, Lzz en SW), NO los del sistema de salida.
-    # 2. Los ejes en SolidWorks y ROS/Gazebo NO coinciden:
-    #    - ROS Z (Yaw) es el de mayor inercia. En SW la mayor es Lyy. -> ROS Z = SW Y
-    #    - ROS X (Roll) suele ser la de menor inercia. En SW la menor es Lzz. -> ROS X = SW Z
-    #    - ROS Y (Pitch) es la inercia media. En SW la media es Lxx. -> ROS Y = SW X
-    # Valores convertidos de g·mm² a kg·m² (multiplicando por 1e-9):
-    Ixx: 0.002200   # roll  [kg·m²] (Viene de Lzz en SolidWorks)
-    Iyy: 0.002640   # pitch [kg·m²] (Viene de Lxx en SolidWorks)
-    Izz: 0.004198   # yaw   [kg·m²] (Viene de Lyy en SolidWorks)
+    # Como el dron está montado sobre la base rotatoria del FFT GYRO, las inercias
+    # medidas dependerán del sistema completo:
+    #   I_total = I_dron (de SolidWorks) + I_soporte (parte móvil del FFT GYRO)
+    # Deben estimar o medir la inercia que agrega el soporte móvil en cada eje
+    # y sumarla a los momentos del dron para que las dinámicas estimadas coincidan.
+    #FALTARIA CHECAR INTEGRARLE LA INERCIA DEL GYRO AL MODELO MATEMÁTICO.
+    #CHECAR SI LAS INERCIAS EN LOS EJES COINCIDEN O SI LOS EJES ESTAN INVERTIDOS
 
 
     # ── Coeficientes aerodinámicos ───────────────────────────────
     # k: coeficiente de empuje   F = k * omega²   [N·s²/rad²]
     # b: coeficiente de arrastre Q = b * omega²   [N·m·s²/rad²]
     #
-    # NOTA IMPORTANTE SOBRE k:
+    # ⚠️ NOTA IMPORTANTE SOBRE k:
     # Si en la vida real tu dron hace hover al 30% de throttle (PWM = 1300 µs),
     # eso significa que a esa potencia el empuje contrarresta exactamente al peso:
     #   4 * k * omega_hover² = m * g
@@ -39,29 +36,34 @@
     #   - Hover ocurre al 30% (PWM = 1300 µs)
     #   - Empieza a subir al 35% (PWM = 1350 µs)
     #   - En ralentí (PWM = 1084 µs / 8.4% throttle), el empuje es mínimo (0.44 N) y el dron NO se levanta del piso.
-    k: 1.72e-06     # [CORREGIDO para hover al 30% de throttle]
+    # Bajado a 1.45e-06 para suavizar el empuje y evitar que salga disparado
+    k: 0.00000145     
 
-    b: 2.75e-08     # [CORREGIDO proporcionalmente a k: b ≈ 0.016 × k = 0.016 × 1.72e-6]
-    # b: coeficiente de arrastre Q = b × omega²   [N·m·s²/rad²]
-    # Relación empírica para hélices 5": b ≈ 0.016 × k
+    b: 0.0000000215     # [AJUSTADO proporcionalmente a k: b ≈ 0.015 × k]
 
-    # ── Inercia del rotor [kg·m²] ────────────────────────────────
-    # Motor RS2205 2300KV
-    # Cómo obtenerlo: datasheet del motor o medir experimentalmente
-    # CHECAR / CORREGIR ESTO
-    Ir: 6.00e-05    # [DATASHEET] pendiente NO LO HE ENCONTRADO EL DATO BIEN 
+    # INERCIAS [kg·m²] (Basadas en Centro de Masa de SolidWorks + Swap Y/Z)
+    Ixx: 0.002640
+    Iyy: 0.002200
+    Izz: 0.004198
+    Ir:  0.000060
 
-    # ── Arrastre aerodinámico traslacional [kg/s] ────────────────
-    # Fuerza de arrastre en cada eje: F_arrastre = A * velocidad
-    # Poner 0.0 si no se tiene dato o si se quiere ignorar este efecto
-    Ax: 0.15        # [ESTIMADO] arrastre en X
-    Ay: 0.15        # [ESTIMADO] arrastre en Y
-    Az: 0.15        # [ESTIMADO] arrastre en Z
+    # COEFICIENTES DE ARRASTRE TRANSLACIONAL [kg/s]
+    Ax: 8.0        
+    Ay: 8.0        
+    Az: 4.5         # Amortiguación vertical para que el Z sea estable y no salte
 
+    # ── CONFIGURACIÓN DEL STAND DE PRUEBAS ──
+    # Si True, el dron virtual jamás se moverá en los ejes X e Y.
+    # Desactivado (False) para permitir visualizar el movimiento en todos los ejes.
+    bloquear_xy: False
 
     # PARÁMETROS DE CONEXIÓN MAVLink
     # Modo de conexión: "udp" (con QGroundControl) o "serial" (directo)
     mavlink_modo: "udp"
+
+    # Multiplicador de agresividad del IMU
+    # Si el Pixhawk filtra los ángulos y reporta máximo 7°, esto lo multiplica para recuperar la velocidad real
+    multiplicador_imu: 1.0
 
     # Puerto serial — solo aplica si mavlink_modo = "serial"
     # Windows: "COM3", "COM4", etc.
@@ -90,8 +92,8 @@
 
     # PARÁMETROS DEL MOTOR RS2205 2300KV
     motor_kv: 2300.0         # KV rating del motor [RPM/V]
-    bateria_voltaje: 14.8   # Voltaje de la batería 4S [V]
-    esc_eficiencia: 0.85    # Eficiencia estimada del ESC [0-1]
+    bateria_voltaje: 14.8   # (Se sobreescribe dinámicamente con SYS_STATUS)
+    esc_eficiencia: 0.73    # [AJUSTADO] Calibrado para flotar con PWM ~1370 a 16V reales
 
 
     # MODO DE OPERACIÓN
@@ -100,3 +102,4 @@
     # que son publicadas por el nodo rutina_demo.
     # Usar true para probar el gemelo digital sin hardware.
     modo_demo: false
+

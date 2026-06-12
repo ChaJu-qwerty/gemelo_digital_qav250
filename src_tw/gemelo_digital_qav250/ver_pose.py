@@ -51,8 +51,8 @@ class VerPoseNode(Node):
         print("        TELEMETRÍA DE POSICIÓN Y ORIENTACIÓN      ")
         print("==================================================")
         print("  [UNIDADES DE POSICIÓN: METROS (m)]")
-        print(f"    X (Lateral/Roll):   {x:8.3f} m")
-        print(f"    Y (Longitud/Pitch): {y:8.3f} m")
+        print(f"    X (Longitud/Pitch): {x:8.3f} m")
+        print(f"    Y (Lateral/Roll):    {y:8.3f} m")
         print(f"    Z (Altura/Empuje):  {z:8.3f} m")
         print("--------------------------------------------------")
         print("  [UNIDADES DE ORIENTACIÓN: GRADOS (°)]")
@@ -71,8 +71,7 @@ def main(args=None):
         pass
     finally:
         node.destroy_node()
-        if rclpy.ok():
-            rclpy.shutdown()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

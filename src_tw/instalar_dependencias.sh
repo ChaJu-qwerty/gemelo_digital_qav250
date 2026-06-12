@@ -90,7 +90,7 @@ echo -e "${GREEN}[OK] Paquetes ROS 2 instalados.${NC}"
 # ── 5. INSTALACIÓN DE LIBRERÍAS PYTHON (PIP) ───────────────────────────
 echo -e "\n${YELLOW}[5/6] Instalando dependencias de Python (pip)...${NC}"
 pip3 install --upgrade pip
-pip3 install pymavlink scipy matplotlib
+pip3 install pymavlink scipy matplotlib pyserial
 echo -e "${GREEN}[OK] Librerías Python instaladas.${NC}"
 
 # ── 6. CONFIGURACIÓN DEL ENTORNO BASHRC ────────────────────────────────
@@ -123,6 +123,6 @@ echo -e "    1. Abre una nueva terminal o ejecuta: ${YELLOW}source ~/.bashrc${NC
 echo -e "    2. Compila el proyecto:"
 echo -e "       ${YELLOW}cd ~/ros2_ws && colcon build --packages-select gemelo_digital_qav250 --symlink-install${NC}"
 echo -e "    3. Corre el simulador:"
-echo -e "       - Modo DEMO (sin dron real): ${YELLOW}ros2 launch gemelo_digital_qav250 gemelo_demo.launch.py${NC}"
-echo -e "       - Modo REAL (con Pixhawk):   ${YELLOW}ros2 launch gemelo_digital_qav250 gemelo_digital.launch.py${NC}"
+echo -e "       - Modo DEMO: ${YELLOW}ros2 launch gemelo_digital_qav250 gemelo_demo.launch.py${NC}"
+echo -e "       - Modo COMPARATIVO: ${YELLOW}ros2 launch gemelo_digital_qav250 gemelo_comparativo.launch.py${NC}"
 echo -e "${YELLOW}══════════════════════════════════════════════════════════════${NC}"

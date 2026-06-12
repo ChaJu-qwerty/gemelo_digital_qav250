@@ -25,7 +25,6 @@ class DroneModel:
         self.Ax = parameters["Ax"] # arrastre aerodinamico en x [kg/s] {calcularlo de alguna manera o ponerle 0}
         self.Ay = parameters["Ay"] # arrastre aerodinamico en y [kg/s] {calcularlo de alguna manera o ponerle 0}
         self.Az = parameters["Az"] # arrastre aerodinamico en z [kg/s] {calcularlo de alguna manera o ponerle 0}
-
         self.g = 9.81 # gravedad [m/s^2]
 
         self.estado = np.zeros(12)
@@ -284,11 +283,16 @@ class DroneModel:
         # 2. Integrar con RK4
         self.estado = self.paso_rk4(dt, T, tau_phi, tau_tht, tau_psi, omega_G)
 
-        # 3. Piso simple (evitar caída infinita)
-        if self.estado[2] < 0.0:
+        # 3. Piso simple (evitar caída infinita y deslizamiento/inclinación terrestre)
+        if self.estado[2] <= 0.0:
             self.estado[2] = 0.0  # Z = 0 (suelo)
             if self.estado[8] < 0.0:
                 self.estado[8] = 0.0  # Velocidad en Z = 0
+            
+            # Si el empuje es menor que el peso del dron, no se levanta
+            # y el suelo previene cualquier inclinación o deslizamiento.
+            if T < (self.m * self.g):
+                self.estado = np.zeros(12)
 
         # 4. Retornar estado actualizado
         return self.estado

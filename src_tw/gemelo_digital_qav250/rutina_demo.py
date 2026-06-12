@@ -122,7 +122,7 @@ class RutinaDemoNode(Node):
         """Timer callback: genera y publica PWM de la fase actual."""
         if self.fase_idx >= len(self.fases):
             # Reiniciar la rutina — resetear el modelo para volver al origen
-            self.get_logger().info("Reiniciando rutina — reseteando pose al origen...")
+            self.get_logger().info("🔄 Reiniciando rutina — reseteando pose al origen...")
             reset_msg = Bool()
             reset_msg.data = True
             self.pub_reset.publish(reset_msg)
@@ -179,37 +179,43 @@ class RutinaDemoNode(Node):
 
     def _roll_izq(self, t, progreso):
         """Roll a la izquierda (tau_phi negativo): Der (M1, M4) sube, Izq (M2, M3) baja."""
-        delta = DELTA_ROT * math.sin(2.0 * math.pi * progreso)  # Onda completa: acelera y frena
+        delta = DELTA_ROT * math.sin(math.pi * progreso)  # suave: sube y baja
         return [self.PWM_HOVER + delta, self.PWM_HOVER - delta,
                 self.PWM_HOVER - delta, self.PWM_HOVER + delta]
 
     def _roll_der(self, t, progreso):
         """Roll a la derecha (tau_phi positivo): Izq (M2, M3) sube, Der (M1, M4) baja."""
-        delta = DELTA_ROT * math.sin(2.0 * math.pi * progreso)
+        delta = DELTA_ROT * math.sin(math.pi * progreso)
         return [self.PWM_HOVER - delta, self.PWM_HOVER + delta,
                 self.PWM_HOVER + delta, self.PWM_HOVER - delta]
 
     def _pitch_fwd(self, t, progreso):
-        """Pitch adelante (tau_theta positivo): Traseros (M2, M4) suben, Frontales (M1, M3) bajan."""
-        delta = DELTA_ROT * math.sin(2.0 * math.pi * progreso)
+        """Pitch adelante (tau_theta positivo): Traseros (M2, M4) suben, Frontales (M1, M3) bajan.
+        
+        El aumento en la parte trasera empuja la cola hacia arriba y la nariz hacia abajo.
+        """
+        delta = DELTA_ROT * math.sin(math.pi * progreso)
         return [self.PWM_HOVER - delta, self.PWM_HOVER + delta,
                 self.PWM_HOVER - delta, self.PWM_HOVER + delta]
 
     def _pitch_bwd(self, t, progreso):
         """Pitch atrás (tau_theta negativo): Frontales (M1, M3) suben, Traseros (M2, M4) bajan."""
-        delta = DELTA_ROT * math.sin(2.0 * math.pi * progreso)
+        delta = DELTA_ROT * math.sin(math.pi * progreso)
         return [self.PWM_HOVER + delta, self.PWM_HOVER - delta,
                 self.PWM_HOVER + delta, self.PWM_HOVER - delta]
 
     def _yaw_cw(self, t, progreso):
-        """Yaw horario (tau_psi negativo): Rotores CCW (M1, M2) suben, CW (M3, M4) bajan."""
-        delta = DELTA_YAW * math.sin(2.0 * math.pi * progreso)
+        """Yaw horario (tau_psi negativo): Rotores CCW (M1, M2) suben, CW (M3, M4) bajan.
+        
+        Por conservación de momento angular, al aumentar la rotación CCW se genera torque de reacción CW.
+        """
+        delta = DELTA_YAW * math.sin(math.pi * progreso)
         return [self.PWM_HOVER + delta, self.PWM_HOVER + delta,
                 self.PWM_HOVER - delta, self.PWM_HOVER - delta]
 
     def _yaw_ccw(self, t, progreso):
         """Yaw anti-horario (tau_psi positivo): Rotores CW (M3, M4) suben, CCW (M1, M2) bajan."""
-        delta = DELTA_YAW * math.sin(2.0 * math.pi * progreso)
+        delta = DELTA_YAW * math.sin(math.pi * progreso)
         return [self.PWM_HOVER - delta, self.PWM_HOVER - delta,
                 self.PWM_HOVER + delta, self.PWM_HOVER + delta]
 
@@ -233,8 +239,7 @@ def main(args=None):
         pass
     finally:
         nodo.destroy_node()
-        if rclpy.ok():
-            rclpy.shutdown()
+        rclpy.shutdown()
 
 
 if __name__ == "__main__":

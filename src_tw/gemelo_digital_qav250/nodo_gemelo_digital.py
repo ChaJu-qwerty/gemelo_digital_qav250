@@ -1,4 +1,5 @@
 import sys
+import math
 import time
 import threading
 
@@ -7,9 +8,9 @@ import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 # pyrefly: ignore [missing-import]
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Vector3
 # pyrefly: ignore [missing-import]
-from std_msgs.msg import Float32MultiArray, MultiArrayDimension, Bool
+from std_msgs.msg import Float32MultiArray, MultiArrayDimension, Bool, Float32
 
 try:
     from tf_transformations import quaternion_from_euler
@@ -26,6 +27,7 @@ except ImportError:
 
 # ── Importar módulos del paquete ──────────────────────────────────────────────
 from .modelo_euler_lagrange import DroneModel
+from .pid_actitud import PIDActitud
 
 try:
     from .captura_pwm_pixhawk import pwm_a_omega, pwm_a_throttle_pct, CANAL_MOTOR
@@ -42,10 +44,12 @@ except ImportError:
 
 # ── Convención de motores QAV250 frame X (PX4) ───────────────────────────────
 #   Canal SERVO_OUTPUT_RAW -> Motor -> Sentido de giro
-#   1 -> Frontal derecho   -> CCW  (omega_G = +omega1)
-#   2 -> Trasero izquierdo -> CCW  (omega_G = +omega2)
-#   3 -> Frontal izquierdo -> CW   (omega_G = -omega3)
-#   4 -> Trasero derecho   -> CW   (omega_G = -omega4)
+#   M1 -> Frontal derecho   -> CCW
+#   M2 -> Trasero izquierdo -> CCW
+#   M3 -> Frontal izquierdo -> CW
+#   M4 -> Trasero derecho   -> CW
+#
+#   El mapeo real depende del cableado físico del dron. Ver motor_map en el YAML.
 CANALES_MOTOR = [1, 2, 3, 4]
 
 
@@ -85,6 +89,7 @@ class NodoGemeloDigital(Node):
             "Az" : params["Az"],
         }
         self.modelo = DroneModel(parametros_modelo)
+        self.modelo_puro = DroneModel(parametros_modelo)
         self.get_logger().info("Modelo Euler-Lagrange inicializado.")
 
         # ── Publishers ────────────────────────────────────────────────────────
@@ -93,11 +98,15 @@ class NodoGemeloDigital(Node):
             params["topic_pose"],
             10,
         )
+        self.pub_euler_calc = self.create_publisher(Vector3, "/qav250/euler_calculado", 10)
         self.pub_motores = self.create_publisher(
             Float32MultiArray,
             params["topic_motores"],
             10,
         )
+        # Publishers para retransmitir datos al nodo fantasma
+        self.pub_pwm = self.create_publisher(Float32MultiArray, '/qav250/pwm_raw', 10)
+        self.pub_bat = self.create_publisher(Float32, '/qav250/battery_voltage', 10)
         self.get_logger().info(f"Publicando pose en:    {params['topic_pose']}")
         self.get_logger().info(f"Publicando motores en: {params['topic_motores']}")
 
@@ -112,11 +121,43 @@ class NodoGemeloDigital(Node):
             self.cli_gazebo = None
             self.get_logger().warn("gazebo_msgs no disponible — sin comunicación con Gazebo.")
 
-        # ── Estado interno ────────────────────────────────────────────────────
         self.estado     = np.zeros(12)
         self.t_anterior = None
         self.dt_nominal = 1.0 / params["frecuencia_hz"]
         self.params     = params
+
+        # Setpoint de actitud proveniente de ATTITUDE_TARGET (radianes)
+        # (solo usado en MODO DEMO con PID)
+        self.setpoint_actitud = (0.0, 0.0, 0.0)
+        self.yaw_sp_offset = None
+
+        # ── Actitud REAL del Pixhawk (mensaje ATTITUDE) ───────────────────────
+        # En MODO REAL, usamos la orientación medida por el IMU del Pixhawk
+        # para calcular la dirección de empuje. Esto elimina la necesidad
+        # de simular la dinámica rotacional (que era inestable).
+        self.actitud_real = None       # (roll, pitch, yaw) en rad
+        self.tasa_angular_real = None  # (p, q, r) en rad/s
+        self.yaw_real_offset = None    # Para normalizar yaw inicial a 0
+        self.roll_real_offset = None   # Para restar inclinación de reposo del IMU
+        self.pitch_real_offset = None  # Para restar inclinación de reposo del IMU
+
+        # Controlador PID de actitud virtual (solo para MODO DEMO)
+        pid_fallback = {
+            "rollrate_k":  params.get("pid_rollrate_k",  1.0),
+            "rollrate_p":  params.get("pid_rollrate_p",  0.15),
+            "rollrate_i":  params.get("pid_rollrate_i",  0.20),
+            "rollrate_d":  params.get("pid_rollrate_d",  0.003),
+            "pitchrate_k": params.get("pid_pitchrate_k", 1.0),
+            "pitchrate_p": params.get("pid_pitchrate_p", 0.15),
+            "pitchrate_i": params.get("pid_pitchxrate_i",  0.20),
+            "pitchrate_d": params.get("pid_pitchrate_d", 0.003),
+            "yawrate_k":   params.get("pid_yawrate_k",   1.0),
+            "yawrate_p":   params.get("pid_yawrate_p",   0.20),
+            "yawrate_i":   params.get("pid_yawrate_i",   0.10),
+            "yawrate_d":   params.get("pid_yawrate_d",   0.0),
+        }
+        self.pid_actitud = PIDActitud(fallback=pid_fallback)
+        self.get_logger().info("PID de actitud (MODO DEMO) inicializado con fallback.")
 
         # Calcular OMEGA_MAX dinámicamente según los parámetros del motor del YAML
         motor_kv = self.params.get("motor_kv", 2300.0)
@@ -124,6 +165,14 @@ class NodoGemeloDigital(Node):
         esc_eficiencia = self.params.get("esc_eficiencia", 0.85)
         rpm_max = motor_kv * bateria_voltaje * esc_eficiencia
         self.omega_max = rpm_max * (2.0 * np.pi / 60.0)
+
+        # ── Mapeo de canales Pixhawk -> motores del modelo ────────────────────
+        # motor_map[i] indica que canal Pixhawk (1-indexado) alimenta al motor
+        # Mi+1 del modelo. Ejemplo: [1,2,3,4] = canal 1->M1, canal 2->M2, etc.
+        # Si el dron se mueve en el eje incorrecto, cambiar este mapeo en el YAML.
+        raw_map = params.get("motor_map", [1, 2, 3, 4])
+        self.motor_map = [int(ch) - 1 for ch in raw_map]  # Convertir a 0-indexado
+        self.get_logger().info(f"Mapeo de motores (canal Pixhawk -> modelo): {raw_map}")
 
         # PWM actual de cada motor (actualizado desde el hilo MAVLink o demo)
         self.pwm_actual = [1000.0] * 4
@@ -138,7 +187,7 @@ class NodoGemeloDigital(Node):
         if self.modo_demo:
             # ── MODO DEMO: subscribirse al topic de PWM simulado ──────────────
             self.get_logger().info("=" * 60)
-            self.get_logger().info("  MODO DEMO ACTIVADO — Sin conexión MAVLink")
+            self.get_logger().info("  🎮 MODO DEMO ACTIVADO — Sin conexión MAVLink")
             self.get_logger().info("  Esperando PWM en /qav250/pwm_demo")
             self.get_logger().info("  Ejecutar: ros2 run gemelo_digital_qav250 rutina_demo")
             self.get_logger().info("=" * 60)
@@ -211,6 +260,22 @@ class NodoGemeloDigital(Node):
         self.declare_parameter("bateria_voltaje",    14.8)
         self.declare_parameter("esc_eficiencia",     0.85)
         self.declare_parameter("modo_demo",          False)
+        self.declare_parameter("motor_map",          [1, 2, 3, 4])
+        self.declare_parameter("multiplicador_imu",  1.0)
+        self.declare_parameter("bloquear_xy",        False)
+        # PID fallback gains
+        self.declare_parameter("pid_rollrate_k",     1.0)
+        self.declare_parameter("pid_rollrate_p",     0.15)
+        self.declare_parameter("pid_rollrate_i",     0.20)
+        self.declare_parameter("pid_rollrate_d",     0.003)
+        self.declare_parameter("pid_pitchrate_k",    1.0)
+        self.declare_parameter("pid_pitchrate_p",    0.15)
+        self.declare_parameter("pid_pitchrate_i",    0.20)
+        self.declare_parameter("pid_pitchrate_d",    0.003)
+        self.declare_parameter("pid_yawrate_k",      1.0)
+        self.declare_parameter("pid_yawrate_p",      0.20)
+        self.declare_parameter("pid_yawrate_i",      0.10)
+        self.declare_parameter("pid_yawrate_d",      0.0)
 
     def _cargar_parametros(self) -> dict:
         """Lee todos los parámetros declarados y los retorna como dict."""
@@ -237,6 +302,22 @@ class NodoGemeloDigital(Node):
             "bateria_voltaje"   : self.get_parameter("bateria_voltaje").value,
             "esc_eficiencia"    : self.get_parameter("esc_eficiencia").value,
             "modo_demo"         : self.get_parameter("modo_demo").value,
+            "motor_map"         : self.get_parameter("motor_map").value,
+            "multiplicador_imu" : self.get_parameter("multiplicador_imu").value,
+            "bloquear_xy"       : self.get_parameter("bloquear_xy").value,
+            # PID fallback gains
+            "pid_rollrate_k"    : self.get_parameter("pid_rollrate_k").value,
+            "pid_rollrate_p"    : self.get_parameter("pid_rollrate_p").value,
+            "pid_rollrate_i"    : self.get_parameter("pid_rollrate_i").value,
+            "pid_rollrate_d"    : self.get_parameter("pid_rollrate_d").value,
+            "pid_pitchrate_k"   : self.get_parameter("pid_pitchrate_k").value,
+            "pid_pitchrate_p"   : self.get_parameter("pid_pitchrate_p").value,
+            "pid_pitchrate_i"   : self.get_parameter("pid_pitchrate_i").value,
+            "pid_pitchrate_d"   : self.get_parameter("pid_pitchrate_d").value,
+            "pid_yawrate_k"     : self.get_parameter("pid_yawrate_k").value,
+            "pid_yawrate_p"     : self.get_parameter("pid_yawrate_p").value,
+            "pid_yawrate_i"     : self.get_parameter("pid_yawrate_i").value,
+            "pid_yawrate_d"     : self.get_parameter("pid_yawrate_d").value,
         }
 
     # ── CALLBACK PWM DEMO ─────────────────────────────────────────────────────
@@ -251,7 +332,7 @@ class NodoGemeloDigital(Node):
     def _callback_reset_modelo(self, msg: Bool):
         """Resetea el estado del modelo al origen (llamado por rutina_demo al reiniciar)."""
         if msg.data:
-            self.get_logger().info("Reset de modelo solicitado — volviendo al origen")
+            self.get_logger().info("🔄 Reset de modelo solicitado — volviendo al origen")
             self.modelo.reset()
             self.estado = self.modelo.get_estado()
             self.t_anterior = None  # Forzar recalculo de dt en el siguiente paso
@@ -289,45 +370,234 @@ class NodoGemeloDigital(Node):
             # Bucle de lectura continua
             while rclpy.ok():
                 msg = self.conexion_mav.recv_match(
-                    type    = "SERVO_OUTPUT_RAW",
+                    type    = ["SERVO_OUTPUT_RAW", "ATTITUDE", "ATTITUDE_TARGET", "PARAM_VALUE", "SYS_STATUS"],
                     blocking= True,
                     timeout = 1.0,
                 )
-                if msg is not None:
+                if msg is None:
+                    # FAILSAFE: Si perdemos conexión con Pixhawk por >1 seg, 
+                    # cortamos motores para evitar un "flyaway" al infinito.
+                    with self._lock:
+                        self.pwm_actual = [1000.0] * 4
+                        self.actitud_real = (0.0, 0.0, self.yaw_real_offset if self.yaw_real_offset else 0.0)
+                    continue
+                tipo = msg.get_type()
+                if tipo == "SERVO_OUTPUT_RAW":
                     with self._lock:
                         for i, canal in enumerate(CANALES_MOTOR):
                             attr = f"servo{canal}_raw"
                             self.pwm_actual[i] = float(getattr(msg, attr, 1000) or 1000)
+                        
+                        # Publicar PWM para el nodo fantasma
+                        msg_pwm = Float32MultiArray()
+                        msg_pwm.data = self.pwm_actual
+                        self.pub_pwm.publish(msg_pwm)
+
+                elif tipo == "ATTITUDE":
+                    # ── ACTITUD REAL del IMU del Pixhawk (NED -> ENU) ─────
+                    # Pixhawk manda ángulos en formato NED (North-East-Down):
+                    #   Pitch+: Nariz ARRIBA
+                    #   Yaw+:   Giro DERECHA
+                    # Pero nuestro modelo Euler-Lagrange y Gazebo son ENU (East-North-Up):
+                    #   Pitch+: Nariz ABAJO
+                    #   Yaw 0:  Apunta al ESTE (+X)
+                    # Por lo tanto, debemos transformar de NED a ENU:
+                    roll_real  = float(msg.roll)
+                    pitch_real = -float(msg.pitch)
+                    yaw_raw    = (math.pi / 2.0) - float(msg.yaw)
+
+                    with self._lock:
+                        # Capturar offsets iniciales cuando el dron está en reposo.
+                        # Los tres ángulos se deben restar:
+                        #   - Yaw:   Orientación magnética, irrelevante en el simulador.
+                        #   - Roll:  Si el dron está en una mesa inclinada, el IMU reporta
+                        #            Roll≠0 pero el dron no se mueve. Sin restar esto,
+                        #            el simulador genera fuerza lateral constante.
+                        #   - Pitch: Mismo caso que Roll.
+                        # Estos offsets se capturan ANTES de armar, cuando los motores
+                        # están apagados (PWM=1000) y el dron está quieto en el suelo.
+                        if self.yaw_real_offset is None:
+                            self.yaw_real_offset = yaw_raw
+                            self.roll_real_offset = roll_real
+                            self.pitch_real_offset = pitch_real
+                            self.get_logger().info(
+                                f"Offsets de reposo capturados: "
+                                f"Roll={math.degrees(roll_real):.1f}° "
+                                f"Pitch={math.degrees(pitch_real):.1f}° "
+                                f"Yaw={math.degrees(yaw_raw):.1f}°"
+                            )
+
+                        # Restar offsets para que la orientación de reposo sea (0,0,0)
+                        roll_cal  = roll_real - self.roll_real_offset
+                        pitch_cal = pitch_real - self.pitch_real_offset
+                        yaw_rel   = yaw_raw - self.yaw_real_offset
+                        while yaw_rel > math.pi: yaw_rel -= 2.0 * math.pi
+                        while yaw_rel < -math.pi: yaw_rel += 2.0 * math.pi
+
+                        self.actitud_real = (roll_cal, pitch_cal, yaw_rel)
+                        self.tasa_angular_real = (
+                            float(msg.rollspeed),
+                            float(msg.pitchspeed),
+                            float(msg.yawspeed),
+                        )
+
+                elif tipo == "ATTITUDE_TARGET":
+                    # Solo para MODO DEMO fallback
+                    q = msg.q
+                    roll_sp, pitch_sp, yaw_sp = self._quat_a_euler(
+                        float(q[0]), float(q[1]), float(q[2]), float(q[3])
+                    )
+                    with self._lock:
+                        if self.yaw_sp_offset is None:
+                            self.yaw_sp_offset = yaw_sp
+                        yaw_rel = yaw_sp - self.yaw_sp_offset
+                        while yaw_rel > math.pi: yaw_rel -= 2.0 * math.pi
+                        while yaw_rel < -math.pi: yaw_rel += 2.0 * math.pi
+                        self.setpoint_actitud = (roll_sp, pitch_sp, yaw_rel)
+
+                elif tipo == "PARAM_VALUE":
+                    nombre = msg.param_id.rstrip("\x00")
+                    valor  = float(msg.param_value)
+                    aplicado = self.pid_actitud.actualizar_ganancias(nombre, valor)
+                    if aplicado:
+                        self.get_logger().info(
+                            f"[AUTOTUNE] Ganancia actualizada: {nombre} = {valor:.6f}"
+                        )
+
+                elif tipo == "SYS_STATUS":
+                    # Extraer voltaje de la batería en mV y pasarlo a V
+                    voltaje = float(msg.voltage_battery) / 1000.0
+                    # Ignorar si da 0 o un valor basura (ej. desconectado)
+                    if voltaje > 5.0:
+                        with self._lock:
+                            motor_kv = self.params.get("motor_kv", 2300.0)
+                            esc_eficiencia = self.params.get("esc_eficiencia", 0.85)
+                            rpm_max = motor_kv * voltaje * esc_eficiencia
+                            self.omega_max = rpm_max * (2.0 * math.pi / 60.0)
+                        
+                        # Publicar voltaje para el nodo fantasma
+                        msg_bat = Float32()
+                        msg_bat.data = voltaje
+                        self.pub_bat.publish(msg_bat)
 
         except Exception as e:
             self.get_logger().error(f"Error en hilo MAVLink: {e}")
 
     def _solicitar_servo_stream(self):
-        """Pide al Pixhawk que transmita SERVO_OUTPUT_RAW a 20 Hz."""
+        """Pide al Pixhawk SERVO_OUTPUT_RAW (throttle) y ATTITUDE_TARGET (setpoint)."""
         try:
             self.conexion_mav.mav.request_data_stream_send(
                 self.conexion_mav.target_system,
                 self.conexion_mav.target_component,
                 mavutil.mavlink.MAV_DATA_STREAM_RAW_CONTROLLER,
-                20,  # Hz
-                1,   # activar
+                20, 1,
             )
-            self.get_logger().info("Stream SERVO_OUTPUT_RAW solicitado a 20 Hz.")
+            self.conexion_mav.mav.request_data_stream_send(
+                self.conexion_mav.target_system,
+                self.conexion_mav.target_component,
+                mavutil.mavlink.MAV_DATA_STREAM_EXTRA1,
+                20, 1,
+            )
+            self.conexion_mav.mav.request_data_stream_send(
+                self.conexion_mav.target_system,
+                self.conexion_mav.target_component,
+                mavutil.mavlink.MAV_DATA_STREAM_EXTENDED_STATUS,
+                2, 1, # 2 Hz es suficiente para batería
+            )
+            self.get_logger().info("Streams SERVO_OUTPUT_RAW, ATTITUDE y SYS_STATUS solicitados.")
+            
+            # Solicitar ganancias PID al iniciar
+            self._solicitar_parametros_pid()
         except Exception as e:
             self.get_logger().warn(f"No se pudo solicitar stream: {e}")
+
+    def _solicitar_parametros_pid(self):
+        """Solicita individualmente al Pixhawk los parametros del rate controller."""
+        params_a_pedir = [
+            "MC_ROLLRATE_K",  "MC_ROLLRATE_P",  "MC_ROLLRATE_I",  "MC_ROLLRATE_D",
+            "MC_PITCHRATE_K", "MC_PITCHRATE_P", "MC_PITCHRATE_I", "MC_PITCHRATE_D",
+            "MC_YAWRATE_K",   "MC_YAWRATE_P",   "MC_YAWRATE_I",   "MC_YAWRATE_D",
+        ]
+        self.get_logger().info("Solicitando ganancias PID (MC_*) al Pixhawk...")
+        for p in params_a_pedir:
+            try:
+                self.conexion_mav.mav.param_request_read_send(
+                    self.conexion_mav.target_system,
+                    self.conexion_mav.target_component,
+                    p.encode("utf-8"),
+                    -1
+                )
+                time.sleep(0.01)  # Pequeño delay para no saturar el enlace
+            except Exception as e:
+                self.get_logger().warn(f"Error solicitando {p}: {e}")
+
+    @staticmethod
+    def _quat_a_euler(qw: float, qx: float, qy: float, qz: float) -> tuple:
+        """Convierte cuaternion MAVLink (w,x,y,z) a Euler (roll, pitch, yaw) en radianes."""
+        sinr = 2.0 * (qw * qx + qy * qz)
+        cosr = 1.0 - 2.0 * (qx * qx + qy * qy)
+        roll = math.atan2(sinr, cosr)
+        sinp = 2.0 * (qw * qy - qz * qx)
+        pitch = math.copysign(math.pi / 2.0, sinp) if abs(sinp) >= 1.0 else math.asin(sinp)
+        siny = 2.0 * (qw * qz + qx * qy)
+        cosy = 1.0 - 2.0 * (qy * qy + qz * qz)
+        yaw  = math.atan2(siny, cosy)
+        return roll, pitch, yaw
+
+    def _mixer_inverso(self, T: float, tau_roll: float,
+                       tau_pitch: float, tau_yaw: float) -> tuple:
+        """
+        Mixer inverso de Luukkonen frame-X con desaturacion.
+        Convierte (T, tau_roll, tau_pitch, tau_yaw) -> (omega1..4) [rad/s].
+
+        Resuelve el sistema lineal 4x4 garantizando que la suma de s_i 
+        siempre coincida exactamente con A para preservar el empuje.
+        """
+        k = self.modelo.k
+        b = self.modelo.b
+        L = self.modelo.l / math.sqrt(2.0)
+
+        A = T / k
+        B = tau_roll  / (k * L)
+        C = tau_pitch / (k * L)
+        D = tau_yaw   / b
+
+        # ── Desaturación del mixer para prevenir tirones de empuje ──
+        # Si la suma de las demandas de actitud excede el empuje base A,
+        # reducimos B, C, y D proporcionalmente. Esto garantiza que 
+        # s1..s4 nunca sean negativos y T se mantenga exactamente igual.
+        suma_actitud = abs(B) + abs(C) + abs(D)
+        if suma_actitud > A:
+            if A > 1e-6:
+                escala = A / suma_actitud
+                B *= escala
+                C *= escala
+                D *= escala
+            else:
+                B = C = D = 0.0
+
+        s1 = max(0.0, (A - B - C - D) / 4.0)
+        s2 = max(0.0, (A + B + C - D) / 4.0)
+        s3 = max(0.0, (A + B - C + D) / 4.0)
+        s4 = max(0.0, (A - B + C + D) / 4.0)
+
+        return math.sqrt(s1), math.sqrt(s2), math.sqrt(s3), math.sqrt(s4)
 
     # ── CALLBACK PRINCIPAL (timer ROS 2) ─────────────────────────────────────
 
     def _callback_publicar(self):
         """
         Se ejecuta a la frecuencia definida en el YAML.
-        Toma el último PWM disponible, actualiza el modelo y publica.
-        """
-        # Leer PWM de forma thread-safe
-        with self._lock:
-            pwm = list(self.pwm_actual)
 
-        # dt adaptativo con clamping de seguridad
+        MODO DEMO: usa los PWM de la rutina_demo + modelo Euler-Lagrange completo (RK4).
+        MODO REAL: usa empuje de PWM + actitud REAL del Pixhawk (ATTITUDE)
+                   para integrar solo la traslacion (X, Y, Z).
+        """
+        with self._lock:
+            pwm      = list(self.pwm_actual)
+            setpoint = tuple(self.setpoint_actitud)
+
+        # dt adaptativo
         ahora = time.time()
         if self.t_anterior is None:
             dt = self.dt_nominal
@@ -337,36 +607,186 @@ class NodoGemeloDigital(Node):
                 dt = self.dt_nominal
         self.t_anterior = ahora
 
-        # PWM -> omega (rad/s) usando OMEGA_MAX dinámico configurado
-        # Mapea PWM [1000, 2000] a [0, omega_max]
-        omegas = [
-            float(np.clip((p - 1000.0) / 1000.0, 0.0, 1.0) * self.omega_max)
-            for p in pwm
-        ]
-        omega1, omega2, omega3, omega4 = omegas
+        if self.modo_demo:
+            # ── MODO DEMO: modelo completo Euler-Lagrange con RK4 ──────────
+            omegas = [
+                float(np.clip((p - 1000.0) / 1000.0, 0.0, 1.0) * self.omega_max)
+                for p in pwm
+            ]
+            try:
+                omega1 = omegas[self.motor_map[0]]
+                omega2 = omegas[self.motor_map[1]]
+                omega3 = omegas[self.motor_map[2]]
+                omega4 = omegas[self.motor_map[3]]
+                o1 = omegas[self.motor_map[0]]
+                o2 = omegas[self.motor_map[1]]
+                o3 = omegas[self.motor_map[2]]
+                o4 = omegas[self.motor_map[3]]
+            except IndexError:
+                omega1, omega2, omega3, omega4 = omegas
+                o1, o2, o3, o4 = omega1, omega2, omega3, omega4
 
-        # Actualizar modelo con RK4
-        try:
-            self.estado = self.modelo.actualizar(omega1, omega2, omega3, omega4, dt)
-        except Exception as e:
-            self.get_logger().warn(f"Error en modelo: {e}")
+            # Usar modelo RK4 completo (rotacional + translacional)
+            try:
+                self.estado = self.modelo.actualizar(o1, o2, o3, o4, dt)
+            except Exception as e:
+                self.get_logger().warn(f"Error en modelo: {e}")
+                return
+
+            if self.modelo.tiene_nan():
+                self._nan_reset_count += 1
+                self.get_logger().warn(
+                    f"WARNING: NaN en estado — reseteando (reset #{self._nan_reset_count})"
+                )
+                self.modelo.reset()
+                self.pid_actitud.reset()
+                self.estado = self.modelo.get_estado()
+                return
+
+            omegas_pub = [omega1, omega2, omega3, omega4]
+            self._publicar_pose()
+            self._publicar_motores(omegas_pub, pwm)
             return
+        else:
+            # ── MODO REAL: Actitud real del Pixhawk + PWM directo ─────────
+            # Arquitectura correcta:
+            #   - El Pixhawk ya hizo toda la cascada de control internamente
+            #     (Posicion → Velocidad → Actitud → Rate → Motores)
+            #   - Nosotros recibimos el RESULTADO: los 4 PWM y la actitud medida
+            #   - Solo necesitamos calcular la traslación (X, Y, Z)
+            #     usando el empuje total + la orientación real
+            #
+            # ¿Por qué NO simulamos la dinámica rotacional?
+            #   - Las diferencias mínimas entre PWMs de motores generaban
+            #     torques que, sin el lazo de control completo del Pixhawk,
+            #     se acumulaban y hacían explotar los ángulos.
+            #   - El Pixhawk ya mide la actitud con su IMU (giroscopio +
+            #     acelerómetro + magnetómetro). Es mucho más preciso que
+            #     nuestra simulación.
 
-        # ── Detección de NaN — protección extra en el nodo ────────────────
-        if self.modelo.tiene_nan():
-            self._nan_reset_count += 1
-            self.get_logger().warn(
-                f"WARNING: NaN detectado en estado — reseteando modelo "
-                f"(reset #{self._nan_reset_count})"
-            )
-            self.modelo.reset()
-            self.estado = self.modelo.get_estado()
-            return
+            # 1. Convertir PWM → omega para cada motor
+            omegas_raw = [
+                float(np.clip((p - 1000.0) / 1000.0, 0.0, 1.0) * self.omega_max)
+                for p in pwm
+            ]
+            try:
+                omega1 = omegas_raw[self.motor_map[0]]
+                omega2 = omegas_raw[self.motor_map[1]]
+                omega3 = omegas_raw[self.motor_map[2]]
+                omega4 = omegas_raw[self.motor_map[3]]
+            except IndexError:
+                omega1, omega2, omega3, omega4 = omegas_raw
 
-        # Publicar pose en ROS 2 (y opcionalmente a Gazebo)
+            # -- INTEGRACIÓN PURA ABIERTA (Solo para telemetría/comparación matemática) --
+            try:
+                self.modelo_puro.actualizar(omega1, omega2, omega3, omega4, dt)
+                vec_msg = Vector3()
+                vec_msg.x = float(math.degrees(self.modelo_puro.estado[3]))
+                vec_msg.y = float(math.degrees(self.modelo_puro.estado[4]))
+                vec_msg.z = float(math.degrees(self.modelo_puro.estado[5]))
+                self.pub_euler_calc.publish(vec_msg)
+            except Exception as e:
+                pass
+
+            # 2. Empuje total T = k * Σ(ωi²)
+            T = self.modelo.k * (omega1**2 + omega2**2 + omega3**2 + omega4**2)
+
+            # 3. Obtener actitud real del Pixhawk (con lock)
+            with self._lock:
+                actitud = self.actitud_real
+                tasas   = self.tasa_angular_real
+
+            # 4. Si aún no llega ATTITUDE, usar ángulos = 0 (horizontal)
+            if actitud is not None:
+                phi, theta, psi = actitud
+                
+                # APLICAR MULTIPLICADOR DE IMU
+                mult = self.get_parameter("multiplicador_imu").value
+                phi *= mult
+                theta *= mult
+                
+                # CLAMP DE SEGURIDAD: Nunca permitir inclinaciones > 85° (1.48 rad)
+                # Evita que un multiplicador alto o un pico del IMU invierta el empuje
+                phi = float(np.clip(phi, -1.48, 1.48))
+                theta = float(np.clip(theta, -1.48, 1.48))
+                
+                # El Yaw (psi) ya viene con el offset restado desde el hilo MAVLink (self.actitud_real).
+                # Ya no necesitamos restarlo de nuevo aquí.
+            else:
+                phi, theta, psi = 0.0, 0.0, 0.0
+
+            # 5. [ELIMINADO] Bloqueo en suelo: Ya no reseteamos el estado a 0 si toca el piso, 
+            # porque eso causaba el "temblor" o stuttering si el dron volaba muy bajo y rozaba Z=0.
+            # La colisión con el suelo se maneja suavemente al final del bucle.
+
+            # 6. Dirección de empuje en frame inercial (Luukkonen ec. 21)
+            # FIX: Para pruebas en el stand (donde el magnetómetro puede driftear 180° en interiores),
+            # forzamos psi=0 en la matriz de traslación. Esto asegura que Pitch SIEMPRE mueva en X
+            # y Roll SIEMPRE mueva en Y en la pantalla, ignorando si el dron virtual cree estar mirando al sur.
+            sphi, cphi = np.sin(phi), np.cos(phi)
+            stht, ctht = np.sin(theta), np.cos(theta)
+            
+            # Matriz con psi=0 (cpsi=1, spsi=0)
+            thrust_dir_x = (1.0 * stht * cphi) + (0.0 * sphi)
+            thrust_dir_y = (0.0 * stht * cphi) - (1.0 * sphi)
+            thrust_dir_z = ctht * cphi
+
+            # 7. Velocidades actuales del estado
+            dx = float(self.estado[6])
+            dy = float(self.estado[7])
+            dz = float(self.estado[8])
+
+            # 8. Aceleraciones base sin arrastre (fuerzas propulsivas)
+            m = self.modelo.m
+            accel_x = (T / m) * thrust_dir_x
+            accel_y = (T / m) * thrust_dir_y
+            accel_z = (T / m) * thrust_dir_z - self.modelo.g
+
+            # 9. Integración Implícita del Arrastre (Estabilidad incondicional)
+            # v_new = (v_old + a * dt) / (1 + (drag/m) * dt)
+            dx_new = (dx + accel_x * dt) / (1.0 + (self.modelo.Ax / m) * dt)
+            dy_new = (dy + accel_y * dt) / (1.0 + (self.modelo.Ay / m) * dt)
+            dz_new = (dz + accel_z * dt) / (1.0 + (self.modelo.Az / m) * dt)
+
+            # Integración de posición (Symplectic Euler)
+            x_new = float(self.estado[0]) + dx_new * dt
+            y_new = float(self.estado[1]) + dy_new * dt
+            z_new = float(self.estado[2]) + dz_new * dt
+
+            # Clamp Z >= 0 (suelo) y Fricción Estática
+            if z_new <= 0.0:
+                z_new = 0.0
+                dz_new = max(0.0, dz_new)
+                dx_new = 0.0
+                dy_new = 0.0
+
+            # ── MODO STAND DE PRUEBAS ──
+            # Si está activado, bloquea por completo el movimiento lateral.
+            if self.params.get("bloquear_xy", False):
+                x_new = 0.0
+                y_new = 0.0
+                dx_new = 0.0
+                dy_new = 0.0
+
+            # 10. Actualizar vector de estado [x,y,z, phi,theta,psi, dx,dy,dz, p,q,r]
+            self.estado[0] = x_new
+            self.estado[1] = y_new
+            self.estado[2] = z_new
+            self.estado[3] = phi       # roll real del IMU
+            self.estado[4] = theta     # pitch real del IMU
+            self.estado[5] = psi       # yaw real del IMU
+            self.estado[6] = dx_new
+            self.estado[7] = dy_new
+            self.estado[8] = dz_new
+            if tasas is not None:
+                self.estado[9]  = tasas[0]
+                self.estado[10] = tasas[1]
+                self.estado[11] = tasas[2]
+
+            omegas = [omega1, omega2, omega3, omega4]
+
+        # ── Publicar estado ───────────────────────────────────────────────
         self._publicar_pose()
-
-        # Publicar velocidades de motores
         self._publicar_motores(omegas, pwm)
 
     # ── PUBLICADORES ─────────────────────────────────────────────────────────
@@ -444,8 +864,7 @@ def main(args=None):
         pass
     finally:
         nodo.destroy_node()
-        if rclpy.ok():
-            rclpy.shutdown()
+        rclpy.shutdown()
 
 
 if __name__ == "__main__":
